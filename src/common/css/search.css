@@ -1,0 +1,59 @@
+.indexlist{
+    width:100%;
+}
+.topseatch{
+    width:100%;
+    height:0.44rem;
+    position: fixed;
+    top:0;
+    left:0;
+    border-bottom:1px solid #cccccc;
+    z-index:9999;
+    background:#ffffff;
+}
+.topseatch>img{
+    width:0.12rem;
+    height:0.2rem;
+    position: absolute;
+    top:0.12rem;
+    left:0.12rem;
+    display: inline-block;
+}
+
+
+#topserchbox{
+    display: inline-block;
+    border-radius: 0.04rem;
+    width:2.8rem;
+    height:0.35rem;
+    background-color:#f2f2f2;
+    float:left;
+    margin-left:0.5rem;
+    margin-top:0.045rem;
+}
+#topserchbox>img{
+    width:0.16rem;
+    float:left;
+    margin-top:0.1rem;
+    margin-left:0.14rem;
+    vertical-align: middle;
+}
+#topserchbox>form{
+    height:0.35rem;
+    width:2rem;
+    vertical-align: middle;   
+    float:left;
+}
+#topserchbox>form>input{
+    width:2rem;
+    height:0.35rem;
+    -webkit-appearance: none;
+    font-size:0.14rem;
+    float:left;
+    margin-left:0.05rem;
+    color:#999999;
+}
+.indexlistbox{
+    margin-top:0.44rem;
+    width:100%;
+}
