@@ -258,7 +258,7 @@ export default {
       warpdivbl: false,
       warpdivbltwo: false,
       homemove: 10,
-      site: window.localStorage.site,
+      site:"",
       sdid: "", //获取标详情用
       dataone: "", //获取的标详情
       urlone: "", //详情接口
@@ -268,12 +268,20 @@ export default {
       page: "1",
       listthree: [], //周边房源
       tel: "", //电话
-      sms: "" //短信
+      sms: "", //短信
+      scity: "" //传的城市
     };
   },
   created() {
-    this.$store.state.activeindex="6"
+    this.$store.state.activeindex = "6";
     this.id = this.$route.query.id;
+    this.site = this.$route.query.scity;
+    if(this.$route.query.scity){
+      this.site=this.$route.query.scity
+      window.localStorage.site=this.$route.query.scity
+    }else{
+      this.site=window.localStorage.site
+    }
     this.sdid = this.$route.params.id;
     window.addEventListener("scroll", this.handleScroll);
     this._querys();
@@ -302,17 +310,16 @@ export default {
     },
     messagebtn() {
       //点击跳转聊天页面
-      if(window.localStorage.token){
-      console.log(this.dataone);
-      var set = {};
-      set.username=this.dataone.broker.chatUsername
-      set.nickName=this.dataone.broker.emplName
-      this.$store.dispatch("message", set);
-      this.$router.push("/abmessage");
-      }else{
+      if (window.localStorage.token) {
+        console.log(this.dataone);
+        var set = {};
+        set.username = this.dataone.broker.chatUsername;
+        set.nickName = this.dataone.broker.emplName;
+        this.$store.dispatch("message", set);
+        this.$router.push("/abmessage");
+      } else {
         this.$router.push("/register");
       }
-      
     },
     _querysadd() {
       //点击收藏querys

@@ -478,24 +478,24 @@ export default {
       this.$router.push("/hotdistrict");
     },
     rentingbtn() {
-      this.$router.push({ path: "/renting/", query: { id: "1" } });
+      this.$router.push({ path: "/renting", query: { id: "1" } });
     },
     rentingbtntwo() {
-      this.$router.push({ path: "/renting/", query: { id: "2" } });
+      this.$router.push({ path: "/renting", query: { id: "2" } });
     },
     newhosebtn() {
       this.$router.push("/newhouse");
     },
     rentingbtnthree() {
       if (window.localStorage.token) {
-        this.$router.push("/sellrent/" + "1");
+        this.$router.push({path:"/sellrent/1"});
       } else {
         this.$router.push("/register");
       }
     },
     rentingbtnfour() {
       if (window.localStorage.token) {
-        this.$router.push("/sellrent/" + "2");
+        this.$router.push({path:"/sellrent/2"});
       } else {
         this.$router.push("/register");
       }

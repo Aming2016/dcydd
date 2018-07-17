@@ -22,7 +22,7 @@ export default {
   created(){
     for(let i=0;i<this.htmlurl.length;i++){
       if(this.htmlurl[i].name=='statistics'){
-        this.ahtml=this.htmlurl[i].value+"?scity="+this.site+"&scityname="+this.sitename
+        this.ahtml=this.htmlurl[i].value+"?scity="+this.site+"&scityname="+this.sitename+"&type=web"
       }
     }
   },

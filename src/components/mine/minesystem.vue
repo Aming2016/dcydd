@@ -62,14 +62,14 @@ export default {
 
     _querystwo() {
       this.$http.post(this.$url.URL.MINELOGOUT).then(res => {
-        console.log(res);
         localStorage.removeItem("token");
-        JIM.loginOut();
         this.$store.state.messagebol=0;
         localStorage.removeItem("sitename");
         localStorage.removeItem("mydata");
         sessionStorage.clear();
+        localStorage.removeItem("my_wx_data");
         this.$router.push("/");
+        JIM.loginOut();
       });
     }
   },

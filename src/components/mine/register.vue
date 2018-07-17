@@ -65,8 +65,8 @@ export default {
       passwords: "" //密码
     };
   },
-  created(){
-     this.$store.state.activeindex="6"
+  created() {
+    this.$store.state.activeindex = "6";
   },
   methods: {
     returnbtn() {
@@ -132,7 +132,15 @@ export default {
       this.registernumber = false;
     },
     wxdlbtn() {
-      location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid='+this.$url.URL.APPID+'&redirect_uri=http://custapp.shyj.cn/mine&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+      var ua = window.navigator.userAgent.toLowerCase();
+      if (ua.match(/MicroMessenger/i) == "micromessenger") {
+       location.href =
+        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+        this.$url.URL.APPID +
+        "&redirect_uri=http://custapp.shyj.cn/mine&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+      } else {
+        MessageBox.alert("请关注世华宜居公众号登录");
+      }
     },
     pricebtntwo() {
       this.typename = "text";
@@ -144,22 +152,22 @@ export default {
       this.$http.get(this.$url.URL.MINEDATAINFO).then(res => {
         window.localStorage.mydata = JSON.stringify(res.data.data);
         this.mydata = res.data.data;
-        console.log(this.mydata)
-        if(this.mydata.easemobUsername==null){
-          this._bangdingjiguang()
-        }else{
+        console.log(this.mydata);
+        if (this.mydata.easemobUsername == null) {
+          this._bangdingjiguang();
+        } else {
           this.jiguangchushi();
         }
       });
     },
-    _bangdingjiguang(){
-      this.$http.get(this.$url.URL.JIGUANGBINDING+"?username="+this.mydata.nickname)
-      .then(res=>{
-        console.log(res)
-        if(res.data.status=='1'){
-          this._querys();
-        }
-      })
+    _bangdingjiguang() {
+      this.$http
+        .get(this.$url.URL.JIGUANGBINDING + "?username=" + this.mydata.mobile)
+        .then(res => {
+          if (res.data.status == "1") {
+            this._querys();
+          }
+        });
     },
     jiguangchushi() {
       //极光初始化
@@ -196,7 +204,7 @@ export default {
           console.log("登录成功");
           console.log(data);
           this.onSyncConversation();
-          this.getConversation();//获取会话列表
+          this.getConversation(); //获取会话列表
         })
         .onFail(function(data) {
           console.log("登录失败");
@@ -208,18 +216,18 @@ export default {
         });
     },
     onDisconnect() {
-      JIM.onDisconnect(()=> {
-        console.log("断线")
-         this._querys()
+      JIM.onDisconnect(() => {
+        console.log("断线");
+        this._querys();
       });
     },
 
     onMsgReceive() {
       //监听收到消息后处理
       JIM.onMsgReceive(data => {
-        console.log("dddd")
-        this.$store.dispatch('messagepush',data.messages[0].content)
-        this.getUnreadMsgCnt(data.messages[0].from_username);//告诉后台获取会话未读数
+        console.log("dddd");
+        this.$store.dispatch("messagepush", data.messages[0].content);
+        this.getUnreadMsgCnt(data.messages[0].from_username); //告诉后台获取会话未读数
         let arr = this.$store.state.messagelist.filter(item => {
           return item.from_username == data.messages[0].from_username; //假设id为唯一标识
         });
@@ -231,15 +239,15 @@ export default {
               media_id: data.messages[0].content.msg_body.media_id
             }).onSuccess(data => {
               urls = data.url;
-              messgone.ctime_ms=data.messages[0].content.create_time,
-              messgone.content = {
-                from_id: data.messages[0].from_username,
-                url: true,
-                msg_body: {
-                  media_id: urls
-                },
-                msg_type: "image"
-              };
+              (messgone.ctime_ms = data.messages[0].content.create_time),
+                (messgone.content = {
+                  from_id: data.messages[0].from_username,
+                  url: true,
+                  msg_body: {
+                    media_id: urls
+                  },
+                  msg_type: "image"
+                });
               var message = {};
               message.from_username = data.messages[0].from_username;
               message.msgs = [];
@@ -247,14 +255,14 @@ export default {
               this.$store.dispatch("messagebtnone", message);
             });
           } else {
-            messgone.ctime_ms=data.messages[0].content.create_time,
-            messgone.content = {
-              from_id: data.messages[0].from_username,
-              msg_body: {
-                text: data.messages[0].content.msg_body.text
-              },
-              msg_type: "text"
-            };
+            (messgone.ctime_ms = data.messages[0].content.create_time),
+              (messgone.content = {
+                from_id: data.messages[0].from_username,
+                msg_body: {
+                  text: data.messages[0].content.msg_body.text
+                },
+                msg_type: "text"
+              });
             var message = {};
             message.from_username = data.messages[0].from_username;
             message.msgs = [];
@@ -276,15 +284,17 @@ export default {
         this.onMsgReceive(); //收到消息后处理
       });
     },
-    getUnreadMsgCnt(name) {//告诉后台充值会话信息
+    getUnreadMsgCnt(name) {
+      //告诉后台充值会话信息
       var count = JIM.getUnreadMsgCnt({
         username: name
       });
     },
-    getConversation(){//获取会话列表
-      JIM.getConversation().onSuccess(data=>{
+    getConversation() {
+      //获取会话列表
+      JIM.getConversation().onSuccess(data => {
         console.log(data);
-        this.$store.dispatch('getConversation',data.conversations)
+        this.$store.dispatch("getConversation", data.conversations);
       });
     },
     _goquerys() {

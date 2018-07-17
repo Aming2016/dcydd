@@ -116,7 +116,7 @@ export default {
       indextwo: 0,
       id: "1",
       idtwo: "",
-      site: window.localStorage.site,
+      site: "",
       dataone: "", //经纪人个人信息
       page: "1",
       datalist: [],
@@ -125,6 +125,13 @@ export default {
     };
   },
   created() {
+    this.$store.state.activeindex = "6";
+    if (this.$route.query.scity) {
+      this.site = this.$route.query.scity;
+      window.localStorage.site = this.$route.query.scity;
+    } else {
+      this.site = window.localStorage.site;
+    }
     this.idtwo = this.$route.params.id;
     this._querys();
     this._querystwo();
@@ -135,7 +142,7 @@ export default {
       if (window.localStorage.token) {
         var set = {};
         set.username = this.dataone.chatUsername;
-        set.nickName=this.dataone.emplName
+        set.nickName = this.dataone.emplName;
         this.$store.dispatch("message", set);
         this.$router.push("/abmessage");
       } else {

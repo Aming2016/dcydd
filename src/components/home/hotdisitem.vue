@@ -118,7 +118,7 @@ export default {
       movehx: 3,
       fengxiang: true,
       warpdivbl: false,
-      site: window.localStorage.site,
+      site:"",
       indextwo: 0,
       sdid: "",
       homemove: 10,
@@ -131,6 +131,13 @@ export default {
     };
   },
   created() {
+    this.$store.state.activeindex = "6";
+    if(this.$route.query.scity){
+      this.site=this.$route.query.scity
+      window.localStorage.site=this.$route.query.scity
+    }else{
+      this.site=window.localStorage.site
+    }
     this.sdid = this.$route.params.id;
     window.addEventListener("scroll", this.handleScroll);
     this._querys();

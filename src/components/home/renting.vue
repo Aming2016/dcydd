@@ -629,7 +629,6 @@ export default {
       this.$router.go(-1);
     },
     rentingitembtn(item) {
-      console.log(item)
       this.$router.push({
         path: "/rentingitem/" + item.sdid,
         query: { id: this.id }

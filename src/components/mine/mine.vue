@@ -117,6 +117,7 @@ export default {
     };
   },
   created() {
+    this.$store.state.activeindex="4"
     this._querys();
     if (this.urlname(window.location.href).code) {
       this._urlweixin(this.urlname(window.location.href).code);
@@ -135,11 +136,13 @@ export default {
     _urlweixin(urlcode) {
       //获取微信信息
       this.$http.get(this.$url.URL.WXCODE + "?code=" + urlcode).then(res => {
-        alert(JSON.stringify(res));
-        if(res.status=='1'){
+        window.localStorage.my_wx_data =JSON.stringify(res.data.data);
+        if(res.data.data.status=='2'){
           this.$router.push("/wxregister")
+        }else{
+          window.localStorage.token = res.data.data.uniqueCode;
+          this._querys();//获取个人信息
         }
-        window.sessionStorage.my_wx_data = res.data;
       });
     },
     _querys() {

@@ -33,6 +33,7 @@ let URL = {
     //微信登陆接口
     APPID:"wxa58e668bb81fdad9",
     WXCODE:_host+'/member/authWeixin2',//微信登录
+    WXPHONENUMBER:_host+'/member/registerWeixin2',//微信绑定手机号码
     JIGUANGBROKERREGUSER:_host+'/jiguang/broker/reguser',//极光注册经纪人
     JIGUANGBINDING:_host+'/jiguang/binding',//绑定极光账号
     
