@@ -2,13 +2,13 @@
     <div class="sellrent">
         <headerone :dataname="dataname" class="headerone"></headerone>
         <mt-swipe :auto="4000" class="swiperitem">
-            <mt-swipe-item v-for="item in bannerimg" class="swiperitemitem">
+            <mt-swipe-item v-for="(item,index) in bannerimg" :key="index" class="swiperitemitem">
                 <img :src="item.picUrl|imgfilter" alt="" srcset="">
             </mt-swipe-item>
         </mt-swipe>
         <div class="navtitle">
           <ul>
-            <li :class="{class_23:id=='3'}" v-for="(item,index) in listone" @click="activebtn(item,index)">
+            <li :class="{class_23:id=='3'}" v-for="(item,index) in listone" :key="index" @click="activebtn(item,index)">
               <img src="../../imgs/home/xuanzhong.png" alt="" v-if="index==active">
               <img src="../../imgs/home/weixuanz.png" alt="" v-else>
               <span>{{item}}</span>
@@ -64,6 +64,7 @@
 import headerone from "../module/headertwo";
 import buttonone from "../module/buttonone";
 import { MessageBox, Toast } from "mint-ui";
+import { locationmap } from "../../common/js/locationmap.js";
 export default {
   name: "sellrent",
   data() {
@@ -77,7 +78,7 @@ export default {
       site: window.localStorage.site,
       bannerimg: "", //banner图
       fangyuanxinxi: "房源信息",
-      mydata: JSON.parse(window.localStorage.mydata),
+      mydata: JSON.parse(window.localStorage.dc_mydata),
       photo: "", //电话号码
       brokername: "", //经纪人
       applicantType: "", //申请人类型
@@ -95,7 +96,9 @@ export default {
   },
   created() {
     this.id = this.$route.params.id;
-    this.querysone();
+    locationmap(this).then(() => {
+      this.querysone();
+    });
     if (this.id == "1") {
       this.dataname = "我要卖房";
       this.posturl = this.$url.URL.HOUSEENTRUSTAPPLYSELLHOUSE;
@@ -110,7 +113,9 @@ export default {
   },
   activated() {
     this.id = this.$route.params.id;
-    this.querysone();
+    locationmap(this).then(() => {
+      this.querysone();
+    });
     if (this.id == "1") {
       this.dataname = "我要卖房";
       this.posturl = this.$url.URL.HOUSEENTRUSTAPPLYSELLHOUSE;
@@ -306,7 +311,7 @@ export default {
           buildingName: this.buildingName.buildName, //小区名称,必填
           cityCode: this.cityname.key, //城市编码,必填
           applicantType: this.applicantType, //经纪人类型
-          linkman: this.linkman, //姓名,必填
+          name : this.linkman, //姓名,必填
           phone: this.mydata.mobile, //联系电话,必填
           roomNum: this.roomNum, // 房号,必填
           unitNum: this.unitNum, // 单元号,必填

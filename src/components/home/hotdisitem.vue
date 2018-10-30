@@ -1,23 +1,24 @@
 <template>
     <div class="rentingitem">
         <div class="titlename" :class="{searchboxwarpone:homemove==1,searchboxwarponea:homemove==2,searchboxwarponeb:homemove==3,searchboxwarponec:homemove==4,searchboxwarponed:homemove==5}">
-            <img class="gorentingimg" src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
+            <img class="gorentingimg" v-if="fengxiang" src="../../imgs/home/fanhuitwo.png" alt="" @click="gohomebtn">
+            <img class="gorentingimg" v-else src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
             <img class="titleimgone" v-if="movehx==1" src="../../imgs/home/shoucangxz.png" alt="" @click="qxtianjiascbtn">
             <img class="titleimgone" v-else-if="movehx==2" src="../../imgs/home/weixuanzhes.png" alt="" @click="tianjiascbtn">
             <img class="titleimgone" v-else src="../../imgs/home/shouchangwxz.png" alt="" @click="tianjiascbtn">
-            <img class="fengxiangimg" v-if="fengxiang" src="../../imgs/home/fengxiang.png" alt="">
-            <img class="fengxiangimg" v-else src="../../imgs/home/fengxianghese.png" alt="">
+            <!-- <img class="fengxiangimg" v-if="fengxiang" src="../../imgs/home/fengxiang.png" alt="">
+            <img class="fengxiangimg" v-else src="../../imgs/home/fengxianghese.png" alt=""> -->
         </div>
          
          <mt-swipe :auto="3000" class="swiperitem" :showIndicators="false" @change="handleChange">
-            <mt-swipe-item v-for="item in dataone.housePicList">
+            <mt-swipe-item v-for="(item,index) in dataone.housePicList" :key="index">
                     <img :src="item" alt="" srcset="">
             </mt-swipe-item>            
         </mt-swipe>
         <div class="swiperdivone">{{activeindex}}/{{dataone.housePicList.length}}</div>
         <div class="locathionclass">
             <div>{{dataone.buildName|stringfilter}}</div>
-            
+            <div>{{dataone.adreessOfficial}}</div>
         </div>
         <ul id="ul_1">
           <li>
@@ -72,13 +73,13 @@
          <div class="erlisttwo">
             <div>小区房源</div>
             <div>
-                <span v-for="(item,index) in homebtnlist" @click="homebtns(index)" :class="{homebtn:index==indextwo}">{{item}}</span>
+                <span v-for="(item,index) in homebtnlist" :key="index" @click="homebtns(index)" :class="{homebtn:index==indextwo}">{{item}}</span>
             </div>
         </div>
         <div class="cnxhlist"v-infinite-scroll="loadMore"
   infinite-scroll-disabled="loading"
   infinite-scroll-distance="10">
-            <div class="cnxhlistitem" v-for="item in litetwo" @click="rentingitembtn(item)">
+            <div class="cnxhlistitem" v-for="(item,index) in litetwo" :key="index" @click="rentingitembtn(item)">
                 <div class="cnxhcontnet">
                     <div class="cnxhcontnetleft">
                         <img :src="item.housePic|imgfilter" alt="">
@@ -94,7 +95,7 @@
                             {{item.roomsNum}}房{{item.livingRoomNum}}厅 {{item.builtArea}}m² 
                         </div>
                         <div class="cnxhconterfour">
-                            <div v-for="item in item.houseTag">{{item}}</div>
+                            <div v-for="(item,index) in item.houseTag" :key="index">{{item}}</div>
                         </div>  
                         <div class="cnxhconterfive" v-if="id=='1'">
                             <div>{{item.saleTotal}}万</div>
@@ -144,13 +145,22 @@ export default {
     this._hotlist();
   },
   methods: {
+    _wxfx(){
+      var wxfx = {
+        url: window.location.href,
+        imgurl: this.dataone.housePicList[0],
+        title: this.dataone.buildName,
+        content: this.dataone.buildName + " " + this.dataone.buildSynop+" "+this.dataone.avgSalePrice+"元/平"
+      };
+      this.$wxfx(wxfx);
+    },
     qxtianjiascbtn() {
       //取消收藏
       this._cancelquerys();
     },
     tianjiascbtn() {
       //添加收藏
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this._addquerys();
       } else {
         this.$router.push("/register");
@@ -184,6 +194,7 @@ export default {
         .get(this.$url.URL.BUILDINFO + "/" + this.site + "/" + this.sdid)
         .then(res => {
           this.dataone = res.data.data;
+          this._wxfx()//调取微信授权
           console.log(this.dataone.isCollect);
           this.dataone.isCollect ? (this.movehx = 1) : (this.movehx = 3);
           if(res.data.data.px==0&&res.data.data.py==0){
@@ -288,7 +299,12 @@ export default {
       this._hotlist();
     },
     gohomebtn() {
-      this.$router.go(-1);
+      if(this.$route.query.scity){
+        this.$router.push("/")
+      }else{
+        this.$router.go(-1);
+      }
+      
     },
     rentingitembtn(item) {
       this.$router.push({
@@ -317,6 +333,12 @@ export default {
         map.disableDragging();
         map.addOverlay(marker);
       }, 500);
+    }
+  },
+  destroyed(){
+    if(window.localStorage.scity){
+      window.localStorage.site=window.localStorage.scity
+      window.localStorage.removeItem("scity")
     }
   }
 };
@@ -371,7 +393,7 @@ export default {
   width: 0.22rem;
   position: absolute;
   top: 0.12rem;
-  right: 0.5rem;
+  right: 0.12rem;
   display: inline-block;
   z-index: 999;
 }
@@ -385,7 +407,9 @@ export default {
 }
 .locathionclass {
   width: 100%;
-  height: 0.8rem;
+  // height: 0.8rem;
+  overflow: hidden;
+  padding:0.25rem 0;
 }
 .swiperdivone {
   padding: 0.1rem 0;
@@ -394,6 +418,7 @@ export default {
   background: rgba(0, 0, 0, 0.2);
   color: #333333;
   font-size: 0.13rem;
+  overflow: hidden;
   position: absolute;
   border-radius: 50%;
   right: 0.1rem;
@@ -444,7 +469,14 @@ export default {
   font-size: 0.23rem;
   margin-left: 0.12rem;
   height: 100%;
-  line-height: 0.8rem;
+}
+.locathionclass >div:nth-of-type(2){
+  font-size:0.14rem;
+  color:#999999;
+  margin-top:0.14rem;
+  float:left;
+  width:100%;
+  text-indent: 0.12rem;
 }
 .locathionname {
   font-size: 0.2rem;

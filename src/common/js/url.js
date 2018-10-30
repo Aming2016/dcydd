@@ -30,14 +30,32 @@ let URL = {
     MYMYPROBLEM:_host+'/my/my_problem',//我的咨询
     TRADEPROGRESSQUERY:_host+'/tradeProgress/query',//成交进度列表
     FEEDBACKADVICE:_host+'/feedback/advice',//我的意见反馈
+    //积分卡卷
+    MYCOUPON:_host+'/my/coupon',//我的页面的我的积分卡卷接口
+    SCOREGIFT:_host+'/score/gift',//查询积分可兑换商品列表
+    SCOREDETAIL:_host+'/score/detail',//获取积分明细
+    GIVESCORE:_host+"/score/giveScore",//好友赠送积分
+    COUPONLIST:_host+'/coupon/queryList',//根据状态查看卡劵列表
+    COUPONGIVE:_host+'/coupon/give',//赠送卡劵
+    QUERYGIVELIST:_host+'/coupon/queryGiveList',//转赠的劵
+
+    //分享相关接口
+    FXSHAREADD:_host+"/share/add",//分享增加阅读量
+    FXSHAREFETCDE:_host+'/share/fetchCode',//获取新的分享id
+
     //微信登陆接口
     APPID:"wxa58e668bb81fdad9",
     WXCODE:_host+'/member/authWeixin2',//微信登录
     WXPHONENUMBER:_host+'/member/registerWeixin2',//微信绑定手机号码
-    JIGUANGBROKERREGUSER:_host+'/jiguang/broker/reguser',//极光注册经纪人
+    HUANXINBROKERREGUSER:_host+'/easemob/broker/reguser',//极光注册经纪人
     JIGUANGBINDING:_host+'/jiguang/binding',//绑定极光账号
+    SIGNATUREJAINQUAN:_host+'/member/weixin/signature',//获取微信公众号鉴权信息
+
+    FETCHQRCODEURL:_host+"/member/fetchQRCodeUrl",//获取我的二维码
+    MYINVITE:_host+"/member/myInvite",//我邀请的用户
+    INVITETOME:_host+"/member/InviteTome",//邀请我的 用户
     
-    
+    HOMEDATA:_host+'/home/fetchData',//首页合并的接口
     REGISTER:_host+'/member/register',//注册账号
     FETCHSMSCODE:_host+'/member/fetchSmsCode',//获取验证码
     SMSCODELOGIN:_host+'/member/smsCodelogin',//用户验证码登录
@@ -108,6 +126,7 @@ let URL = {
     CONSULTANTSUBPROBLEM:_host+'/consultant/sub_problem',//向他咨询
     CONSULTANTMYPROBLEM:_host+'/consultant/my_problem',//我的提问
     CONSULTANTMYCONCERN:_host+'/consultant/my_concern',//我关注的问题
+    EVENTADD:_host+'/event/add',//保存事件触发时传递的数据
 
     MAPSECONDAREA:_host+'/map-house/secondArea',//地图找房二手房-城区均价列表
     INFOQUEYLIST:_host+'/info/query',//获取资讯内容信息列表
@@ -128,6 +147,7 @@ let URL = {
     RENTHOUSE:_host + '/rentHouse/queryLike',// 首页猜你喜欢租房
     INFORMATION: _host + '/information/pubs',//首页的购房指南
     BROKERS:_host + '/broker/brokers',//经纪人信息列表
+    BROKERSTWO:_host + '/broker/house/brokers',//预约经纪人信息列表
     BROKERTWO:_host+'/broker',//经纪人详情
     SHOPS:_host+'/shop/shops',//找门店
     HOUSELIST:_host+'/broker/houseList',//经纪人的二手房列表

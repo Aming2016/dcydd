@@ -43,7 +43,7 @@ export default {
       number: 60,
       phonnumber: "", //手机号码
       smsCode:"",//验证码
-      mydata: JSON.parse(window.localStorage.mydata)
+      mydata: JSON.parse(window.localStorage.dc_mydata)
     };
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
     _myquerys(){//请求个人数据
         this.$http.get(this.$url.URL.MINEDATAINFO)
         .then(res=>{
-            window.localStorage.mydata=JSON.stringify(res.data.data)
+            window.localStorage.dc_mydata=JSON.stringify(res.data.data)
             this.$router.back(-1)
         })
     },

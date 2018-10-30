@@ -43,14 +43,19 @@ export default {
       site: window.localStorage.site, //城市
       listone: [],
       page: "1",
-      numberlor: true
+      numberlor: true,
+      url: ""
     };
   },
   created() {
     this.id = this.$route.params.id;
-    this.id == "1"
-      ? (this.dataname = "选择经纪人")
-      : (this.dataname = "选经纪人");
+    if (this.id == "1") {
+      this.dataname = "选择经纪人";
+      this.url = this.$url.URL.BROKERS;
+    } else {
+      this.dataname = "选经纪人";
+      this.url = this.$url.URL.BROKERSTWO;
+    } 
     this._querys();
   },
   methods: {
@@ -69,27 +74,54 @@ export default {
       }
     },
     _querys() {
-      var site = window.localStorage.site;
-      if (this.id == "1") {
-        window.localStorage.site = this.$store.cityname.key;
-      }
-      this.$http
-        .post(this.$url.URL.BROKERS, {
-          scity: this.$store.cityname.key,
-          pageSize: 10,
-          pageNo: this.page
+      if (this.id == "3") {
+        console.log(this.$store.awaitlist)
+        var list=[];
+        for(let i=0;i<this.$store.awaitlist.length;i++){
+          list.push(this.$store.awaitlist[i].sdid)
+        }
+        this.$http.post(this.url,{
+          houseSdid:list
         })
-        .then(res => {
+        .then(res=>{
           this.numberlor = true;
-          for (let i = 0; i < res.data.data.length; i++) {
-            if (res.data.data[i].emplFlag) {
-              res.data.data[i].emplFlag = res.data.data[i].emplFlag.split(",");
+            for (let i = 0; i < res.data.data.length; i++) {
+              if (res.data.data[i].emplFlag) {
+                res.data.data[i].emplFlag = res.data.data[i].emplFlag.split(
+                  ","
+                );
+              }
             }
-          }
-          window.localStorage.sity=site
-          this.listone = this.listone.concat(res.data.data);
-          this.page++;
-        });
+            window.localStorage.sity = site;
+            this.listone = this.listone.concat(res.data.data);
+            console.log(this.listone)
+            this.page++;
+        })
+      } else {
+        var site = window.localStorage.site;
+        if (this.id == "1") {
+          window.localStorage.site = this.$store.cityname.key;
+        }
+        this.$http
+          .post(this.url, {
+            scity: this.$store.cityname.key,
+            pageSize: 10,
+            pageNo: this.page
+          })
+          .then(res => {
+            this.numberlor = true;
+            for (let i = 0; i < res.data.data.length; i++) {
+              if (res.data.data[i].emplFlag) {
+                res.data.data[i].emplFlag = res.data.data[i].emplFlag.split(
+                  ","
+                );
+              }
+            }
+            window.localStorage.sity = site;
+            this.listone = this.listone.concat(res.data.data);
+            this.page++;
+          });
+      }
     },
     gohomebtn() {
       this.$router.go(-1);

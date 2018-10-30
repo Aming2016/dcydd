@@ -3,124 +3,79 @@ export default {
 	BTNONE(state) {
 		state.shade = true
 	},
-	MESSAGE(state, payload) {
-		state.message = payload
-	},
-	MESSAGELIST(state, payload) {
-		state.messagelist = payload
-	},
-	MESSAGEBTN(state, payload) {
-		for (let i = 0; i < state.messagelist.length; i++) {
-			if (
-				state.messagelist[i].from_username ==
-				payload.messages[0].from_username
-			) {
-				var message = {}
-				if (payload.messages[0].content.msg_type == "image") {
-					var url = "";
-					JIM.getResource({
-						media_id: payload.messages[0].content.msg_body.media_id
-					}).onSuccess(data => {
-						url = data.url;
-						message.ctime_ms = payload.messages[0].ctime_ms;
-						message.content = {
-							from_id: payload.messages[0].from_username,
-							url: true,
-							msg_body: {
-								media_id: url
-							},
-							msg_type: "image"
-						};
-						state.messagelist[i].msgs.push(message)
-					});
-					console.log(url)
-
-				} else {
-					console.log(payload)
-					message.ctime_ms = payload.messages[0].ctime_ms;
-					message.content = {
-						from_id: payload.messages[0].from_username,
-						msg_body: {
-							text: payload.messages[0].content.msg_body.text
-						},
-						msg_type: "text"
-					};
-					state.messagelist[i].msgs.push(message)
-
-				};
-
-			}
+	//push到聊天列表
+	PUSHFRIENDLIST(state, payload) {
+		var objct = {
+			quantity: 0,//消息数量			
+			emplName: payload.emplName,//昵称
+			photo: payload.photo,//头像
+			chatUsername: payload.chatUsername,//环信标识
+			content: [],//聊天消息
 		}
-	},
-	MESSAGEBTNONE(state, payload) {
-		state.messagelist.push(payload);
-	},
-	MESSAGEBTNTWO(state, payload) {
-		for (let i = 0; i < state.messagelist.length; i++) {
-			if (
-				state.messagelist[i].from_username ==
-				payload.name
-			) {
-				state.messagelist[i].msgs.push(payload)
-			}
-		}
-	},
-	GETCONVERSATION(state, payload) {
-		payload.reverse();
-		var set = 0;
-		for (let i = 0; i < payload.length; i++) {
-			set = set + payload[i].unread_msg_count
-		}
-		state.messagebol = set;
-		state.friendlist = payload
-	},
-	MESSAGEPUSH(state, payload) {//更新会话列表
-		console.log(state.friendlist)
-		console.log(payload)
-		// if (state.friendlist.length == '0') {
-		// 	var set = {
-		// 		username: payload.from_id,
-		// 		unread_msg_count: 1,
-		// 		nickName: payload.from_name,
-		// 		name: payload.from_id,
-		// 	}
-		// 	state.friendlist.unshift(set)
-		// } else {
-			let arr = state.friendlist.filter(item => {
-				return item.username == payload.from_id; //假设id为唯一标识
-			});
-			if (arr.length == 0) {
-				var set = {
-					username: payload.from_id,
-					unread_msg_count: 1,
-					nickName: payload.from_name,
-					name: payload.from_id,
-				}
-				state.friendlist.unshift(set)
-			} else {
-				for (let i = 0; i < state.friendlist.length; i++) {
-					if (payload.from_id == state.friendlist[i].username) {
-						state.friendlist[i].unread_msg_count++
-					}
-				}
-			}
-		// }
-
-
-	},
-	ONEPUSHMESSGELIST(state,payload){//第一次发消息
-		let arr = state.friendlist.filter(item => {
-			return item.username == payload.username; //假设id为唯一标识
+		state.chatobject = objct;
+		//存储到vuex里面
+		var listfind = state.friendlist.find((value, index) => {
+			return value.chatUsername == payload.chatUsername
 		});
-		if (arr.length == 0) {
-			state.friendlist.unshift(payload)
+		if (!listfind) {
+			//判断存储的会话列表是否存在这个人
+			state.friendlist.unshift(objct)
 		}
-	},
-	MOVEMESSAGEITEM(state, payload) {//清空相应人的已读信息
-		for (let i = 0; i < state.friendlist.length; i++) {
-			if (payload == state.friendlist[i].username) {
-				state.friendlist[i].unread_msg_count = 0
+		//存储到缓存里
+		var lockey = JSON.parse(window.localStorage.dc_mydata).easemobUsername;
+		if (localStorage.getItem(lockey)) {
+			var messagelist = JSON.parse(localStorage.getItem(lockey));
+			var listtwofind = messagelist.find((value, index) => {
+				return value.chatUsername == payload.chatUsername
+			});
+			if (!listtwofind) {
+				//判断存储的会话列表是否存在这个人
+				messagelist.unshift(objct);
+				localStorage.setItem(lockey, JSON.stringify(messagelist));
 			}
 		}
+	},
+	//聊天消息push到对应的人身上去；
+	PUSHFRIENDMESSAGE(state, payload) {
+		let chatUsername;
+		if (payload.chatUsername) {
+			chatUsername = payload.chatUsername;
+		} else {
+			chatUsername = payload.from;
+		};
+		payload.time = new Date().getTime();
+		//push到vuex里面
+		for (let i = 0; i < state.friendlist.length; i++) {
+			if (state.friendlist[i].chatUsername == chatUsername) {
+				//收到消息量加1
+				if (!payload.chatUsername) {
+					state.friendlist[i].quantity++
+				}
+				state.friendlist[i].content.push(payload);
+				var str = state.friendlist.splice(i, 1);
+				state.friendlist.unshift(str[0]);
+			}
+		}
+
+		//push到缓存里面
+		var lockey = JSON.parse(window.localStorage.dc_mydata).easemobUsername;
+		var messagelist = JSON.parse(localStorage.getItem(lockey));
+		for (let i = 0; i < messagelist.length; i++) {
+			if (messagelist[i].chatUsername == chatUsername) {
+				//收到消息量加1
+				if (!payload.chatUsername) {
+					messagelist[i].quantity++
+				}
+				messagelist[i].content.push(payload);
+				var str = messagelist.splice(i, 1);
+				messagelist.unshift(str[0]);
+				localStorage.setItem(lockey, JSON.stringify(messagelist));
+			}
+		}
+	},
+	//点击聊天列表进入聊天界面
+	PUSHFRIENDLISTTWO(state, payload) {
+		state.chatobject = payload;
 	}
+
 }

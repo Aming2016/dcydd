@@ -99,7 +99,7 @@ export default {
 .div_5{
   margin-left:0.1rem;
   margin-right:0.1rem;
-  margin-top:0..06rem;
+  margin-top:0.06rem;
   overflow: hidden;
   >img{
     width:0.14rem;

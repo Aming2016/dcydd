@@ -10,20 +10,19 @@
 
     <mt-index-list class="indexlistbox" v-if="movelist">
         <mt-index-section index="当前">
-            <mt-cell :title="sitename"></mt-cell>
+            <mt-cell :title="sitename" @click.native="btnsettwo"></mt-cell>
         </mt-index-section>
-        <mt-index-section :index="item.title" v-for="item in indexlisttwo">
-            <mt-cell :title="item.name" v-for="item in item.item" @click.native="btnset(item)"></mt-cell>
+        <mt-index-section :index="item.title" v-for="(item,index) in indexlisttwo" :key="index">
+            <mt-cell :title="item.name" v-for="(item,index) in item.item" :key="index" @click.native="btnset(item)"></mt-cell>
         </mt-index-section>
-        <mt-index-section :index="item.title" v-for="item in indexlistone">
-            <mt-cell :title="item.name" v-for="item in item.item"  @click.native="btnset(item)"></mt-cell>
+        <mt-index-section :index="item.title" v-for="(item,index) in indexlistone" :key="index">
+            <mt-cell :title="item.name" v-for="(item,index)  in item.item" :key="index"  @click.native="btnset(item)"></mt-cell>
         </mt-index-section>
     </mt-index-list>
     <ul v-else class="listul">
-        <li v-for="item in indexlistboxone"  @click="btnset(item)">
+        <li v-for="(item,index) in indexlistboxone"  @click="btnset(item)" :key="index">
             {{item.name}}
         </li>
-       
     </ul>
     <div id="allmap"></div>
   </div>
@@ -73,26 +72,29 @@ export default {
     gohomebtn() {
       this.$router.go(-1);
     },
+    btnsettwo(){
+      this.$router.go(-1)
+    },
     btnset(item) {
-      if(this.$store.citynumber){
-        window.localStorage.setItem("site", item.key);
-        window.localStorage.setItem("sitename", item.name);
-        this.$router.go(-1)
-        this._mapquerys(item);
+        if(this.$store.citynumber){
+          window.localStorage.setItem("site", item.key);
+          window.localStorage.setItem("sitename", item.name);
+          this.$router.go(-1)
+          this._mapquerys(item);
 
-        //地图获取坐标
-        var map = new BMap.Map("allmap");
-        map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
-        // 创建地址解析器实例
-        var myGeo = new BMap.Geocoder();
-        // 将地址解析结果显示在地图上，并调整地图视野
-        myGeo.getPoint(item.name, function(point) {
-          window.localStorage.mapxy = JSON.stringify(point);
-        });
-      }else{
-        this.$store.cityname=item
-       this.$router.go(-1)
-      }
+          //地图获取坐标
+          var map = new BMap.Map("allmap");
+          map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+          // 创建地址解析器实例
+          var myGeo = new BMap.Geocoder();
+          // 将地址解析结果显示在地图上，并调整地图视野
+          myGeo.getPoint(item.name, function(point) {
+            window.localStorage.mapxy = JSON.stringify(point);
+          });
+        }else{
+          this.$store.cityname=item
+         this.$router.go(-1)
+        }
       
     },
     _request() {

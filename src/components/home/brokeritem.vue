@@ -1,6 +1,6 @@
 <template>
   <div class="searchlist">
-   <img id="fengxiang" src="../../imgs/home/fengxianghese.png" alt="">
+   <!-- <img id="fengxiang" src="../../imgs/home/fengxianghese.png" alt=""> -->
    <headertwo :dataname="dataname"></headertwo>
                <div id="brokenitemname">
                    <img class="brokenitemimg" src="../../imgs/home/shoucangxz.png" alt="" v-if="isCollect" @click="isCollectcancelbtn">
@@ -90,7 +90,7 @@
             </div>
         </div>
         <ul id="bottombtnone">
-            <li><a :href="'tel:'+dataone.phone">
+            <li @click="phonebtn"><a :href="'tel:'+dataone.phone">
                 打电话
             </a>
             </li>
@@ -137,24 +137,34 @@ export default {
     this._querystwo();
   },
   methods: {
+    phonebtn() {
+      var objct = {
+        data: {},
+        type: "CALL_BROKER"
+      };
+      this.$addevent(objct);
+    },
     messagebtn() {
       //跳转聊天页面
-      if (window.localStorage.token) {
-        var set = {};
-        set.username = this.dataone.chatUsername;
-        set.nickName = this.dataone.emplName;
-        this.$store.dispatch("message", set);
-        this.$router.push("/abmessage");
-      } else {
-        this.$router.push("/register");
-      }
+      this.$http
+        .post(this.$url.URL.HUANXINBROKERREGUSER, {
+          chatUsername: this.dataone.chatUsername
+        })
+        .then(res => {
+          if (window.localStorage.dc_token) {
+            this.$store.dispatch("pushfriendlist", this.dataone);
+            this.$router.push("/abmessage");
+          } else {
+            this.$router.push("/register");
+          }
+        });
     },
     _querys() {
       this.$http
         .get(this.$url.URL.BROKERTWO + "/" + this.site + "/" + this.idtwo)
         .then(res => {
           this.dataone = res.data.data;
-          //    console.log(this.dataone)
+          this._wxfx(); //调取微信分享
           this.isCollect = res.data.data.isCollect;
         });
       this.$http
@@ -171,9 +181,17 @@ export default {
           if (res.data.data.length > 2) {
             res.data.data = res.data.data.slice(0, 2);
           }
-
           this.discuss = res.data.data;
         });
+    },
+    _wxfx() {
+      var wxfx = {
+        url: window.location.href,
+        imgurl: this.dataone.photo,
+        title: "世华易居经纪人",
+        content: this.dataone.emplName + " " + this.dataone.positionName
+      };
+      this.$wxfx(wxfx);
     },
     isCollectcancelbtn() {
       //取消收藏
@@ -191,7 +209,7 @@ export default {
     },
     isCollectaddbtn() {
       //添加收藏
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.$http
           .post(
             this.$url.URL.BROKERCOLLECTIONADD +
@@ -267,6 +285,12 @@ export default {
         path: "/rentingitem/" + item.sdid,
         query: { id: this.id }
       });
+    }
+  },
+  destroyed() {
+    if (window.localStorage.scity) {
+      window.localStorage.site = window.localStorage.scity;
+      window.localStorage.removeItem("scity");
     }
   },
   components: {

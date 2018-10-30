@@ -1,7 +1,8 @@
 <template>
     <div class="renting">
        <div class="topseatch" :class="{searchboxwarpone:homemove==1,searchboxwarponea:homemove==2,searchboxwarponeb:homemove==3,searchboxwarponec:homemove==4,searchboxwarponed:homemove==5}">
-            <img src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
+            <img v-if="homemove>5" src="../../imgs/home/fanhuitwo.png" alt="" @click="gohomebtn">
+            <img v-else src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
             <div id="topserchbox" :class="{searchboxone:homemove==1}">
                 <img src="../../imgs/home/homesousuo.png" alt="" srcset="">
                 <form action="javascript:search();"> 
@@ -12,7 +13,7 @@
         <div class="shuaixuanss" v-show="movesetnumber" @click.self="yingcangbtn">
         </div>
         <ul class="taberlist taberlists" v-show="movesnumbertwo">
-            <li v-for="(item,index) in taberlist" @click.stop="shuaixuan(index,index)" :class="{taberclass:id=='2'}">
+            <li v-for="(item,index) in taberlist" :key="index" @click.stop="shuaixuan(index,index)" :class="{taberclass:id=='2'}">
                 {{item}}
                 <img src="../../imgs/home/xiangxia.png" alt="" srcset="">
             </li>            
@@ -20,23 +21,23 @@
     <div class="shuaixuanone" v-if="active=='0'">
         <ul>
             <li :class="{activesetcolor:sctiveoneone=='100'}" @click="btndistrictsone">不限</li>
-            <li v-for="(item,index) in erealistone" @click="btndistricts(item,index)" :class="{activesetcolor:sctiveoneone==index}">{{item.name}}</li>
+            <li v-for="(item,index) in erealistone" :key="index" @click="btndistricts(item,index)" :class="{activesetcolor:sctiveoneone==index}">{{item.name}}</li>
             
         </ul>
         <ul>
             <li :class="{activesetcolor:sctiveonetwo=='100'}" @click="btndistrictstwotwo">不限</li>
-            <li :class="{activesetcolor:sctiveonetwo==index}" @click="btndistrictstwo(item,index)" v-for="(item,index) in erealisttwo">{{item.name}}</li>
+            <li :class="{activesetcolor:sctiveonetwo==index}" @click="btndistrictstwo(item,index)" v-for="(item,index) in erealisttwo" :key="index">{{item.name}}</li>
         </ul>
     </div>
       <div class="shuaixuantwo" v-else-if="active=='1'&&id=='2'">
-        <div v-for= "(item,index) in HOUSE_HUXING" @click="itemonebtn(item,index)" :class="{sxuanitem:activeone==index}">{{item.name}}</div>
+        <div v-for= "(item,index) in HOUSE_HUXING" :key="index" @click="itemonebtn(item,index)" :class="{sxuanitem:activeone==index}">{{item.name}}</div>
         <div class="bottomdiv_1">
           <p class="gobtnclasstwo"  @click.stop="roomsNumbtnone">条件不限</p>
           <p class="gobtnclass" @click="roomsNumbtn">确定</p>
         </div>
     </div>
      <div class="shuaixuantwo shuaixuantwo_input" v-else-if="active=='2'&&id=='2'">
-       <div v-for="(item,index) in HOUSE_RENTAL"  @click="itemtwobtn(item,index)" :class="{sxuanitem:activetwo==index}">{{item.name}}</div>
+       <div v-for="(item,index) in HOUSE_RENTAL" :key="index"  @click="itemtwobtn(item,index)" :class="{sxuanitem:activetwo==index}">{{item.name}}</div>
        <div class="zidingyiqujian">自定义区间（万）</div>
        <p class="inputbox">
          <input type="text" placeholder="最小金额" v-model="minRentPrice" @focus='testbtn'>
@@ -48,7 +49,7 @@
         </div>
     </div>
     <div class="shuaixuantwo" v-else-if="active=='3'&&id=='2'">
-        <div v-for="(item,index) in HOUSE_AREA"  @click="itemthreebtn(item,index)" :class="{sxuanitem:activethree==index}">{{item.name}}</div>
+        <div v-for="(item,index) in HOUSE_AREA" :key="index"  @click="itemthreebtn(item,index)" :class="{sxuanitem:activethree==index}">{{item.name}}</div>
         <div class="bottomdiv_1">
           <p class="gobtnclasstwo" @click="BuildAreaonebtn">条件不限</p>
           <p class="gobtnclass" @click="BuildAreabtn">确定</p>
@@ -56,14 +57,14 @@
     </div>
 
      <div class="shuaixuantwo" v-else-if="active=='1'&&id=='1'">
-        <div v-for= "(item,index) in HOUSE_HUXING"  @click="itemfourbtn(item,index)" :class="{sxuanitem:activefour==index}">{{item.name}}</div>
+        <div v-for= "(item,index) in HOUSE_HUXING" :key="index"  @click="itemfourbtn(item,index)" :class="{sxuanitem:activefour==index}">{{item.name}}</div>
         <div class="bottomdiv_1">
           <p class="gobtnclasstwo"  @click="roomsNumbtnone">条件不限</p>
           <p class="gobtnclass" @click="roomsNumbtn">确定</p>
         </div>
     </div>
      <div class="shuaixuantwo shuaixuantwo_input" v-else-if="active=='2'&&id=='1'">
-       <div v-for="(item,index) in SELL_PRICE"  @click="itemfivebtn(item,index)" :class="{sxuanitem:activefive==index}">{{item.name}}</div>
+       <div v-for="(item,index) in SELL_PRICE" :key="index"  @click="itemfivebtn(item,index)" :class="{sxuanitem:activefive==index}">{{item.name}}</div>
        <div class="zidingyiqujian">自定义区间（万）</div>
        <p class="inputbox">
          <input type="text" placeholder="最小金额" v-model="minPrice" @focus='testbtn'>
@@ -76,14 +77,14 @@
        
     </div>
     <div class="shuaixuantwo" v-else-if="active=='3'&&id=='1'">
-        <div v-for="(item,index) in HOUSE_AREA"  @click="itemsixbtn(item,index)" :class="{sxuanitem:activesix==index}">{{item.name}}</div>
+        <div v-for="(item,index) in HOUSE_AREA" :key="index"  @click="itemsixbtn(item,index)" :class="{sxuanitem:activesix==index}">{{item.name}}</div>
         <div class="bottomdiv_1">
           <p class="gobtnclasstwo" @click="BuildAreaonebtn">条件不限</p>
           <p class="gobtnclass" @click="BuildAreabtn">确定</p>
         </div>       
     </div>
     <div class="shuaixuantwo" v-else-if="active=='4'&&id=='1'">
-        <div v-for="(item,index) in HOUSE_TYPE"  @click="itemsevenbtn(item,index)" :class="{sxuanitem:activeseven==index}">{{item.name}}</div>
+        <div v-for="(item,index) in HOUSE_TYPE" :key="index"  @click="itemsevenbtn(item,index)" :class="{sxuanitem:activeseven==index}">{{item.name}}</div>
         <div class="bottomdiv_1">
           <p class="gobtnclasstwo" @click="houseFormonebtn">条件不限</p>
           <p class="gobtnclass" @click="houseFormbtn">确定</p>
@@ -91,7 +92,7 @@
     </div>
 
         <mt-swipe :auto="4000" class="swiperitem">
-            <mt-swipe-item v-for="item in bannerimg" class="swiperitemitem">
+            <mt-swipe-item v-for="(item,index) in bannerimg" :key="index" class="swiperitemitem">
                 <a :href="item.contentUrl">
                     <img :src="item.picUrl" alt="" srcset="">
                 </a>
@@ -102,7 +103,7 @@
         <div id="recommend">为你推荐</div>
           <swiper :options="swiperOptions" ref="mySwiper" class="swiperershoufangtwo">
             <!-- slides -->
-            <swiper-slide :auto="0" class="swiperfangitemtwo" v-for="item in tjlist" @click.native="rentingitembtn(item)" :style="{ 'background-image': 'url(' + item.housePic + ')','background-repeat':'no-repeat','background-size':'cover' }">
+            <swiper-slide :auto="0" class="swiperfangitemtwo" v-for="(item,index) in tjlist" :key="index" @click.native="rentingitembtn(item)" :style="{ 'background-image': 'url(' + item.housePic + ')','background-repeat':'no-repeat','background-size':'cover' }">
                 <div class="swipername">{{item.houseTitle }}</div>
                 <div class="swipernametwo">
                     <span>{{item.areaName}}</span>
@@ -127,7 +128,7 @@
         <div class="tabercontent">
         <!-- <div class="shuaixuan" v-show="true" :class="{shuaixuanonesd:remover,shuaixuanonese:removerone}" @click.self="yingcangbtn"> -->
         <ul class="taberlist">
-            <li v-for="(item,index) in taberlist" @click.stop="shuaixuan(item,index)" :class="{taberclass:id=='2'}">
+            <li v-for="(item,index) in taberlist" :key="index" @click.stop="shuaixuan(item,index)" :class="{taberclass:id=='2'}">
                 {{item}}
                 <img src="../../imgs/home/xiangxia.png" alt="" srcset="">
             </li>
@@ -154,7 +155,7 @@
                             {{item.roomsNum}}房{{item.livingRoomNum}}厅 {{item.builtArea}}m² 
                         </div>
                         <div class="cnxhconterfour">
-                            <div v-for="item in item.houseTag ">{{item}}</div>
+                            <div v-for="(item,index) in item.houseTag " :key="index">{{item}}</div>
                         </div>
                          <div class="cnxhconterfive" v-if="id=='1'">
                             <div>{{item.saleTotal}}万</div>
@@ -173,11 +174,12 @@
 <script>
 import { Toast } from "mint-ui";
 import { MessageBox } from "mint-ui";
+import { locationmap } from "../../common/js/locationmap.js";
 export default {
   data() {
     return {
       movesetnumber: false,
-      movesnumbertwo:false,
+      movesnumbertwo: false,
       activeone: null,
       activetwo: null,
       activethree: null,
@@ -185,8 +187,8 @@ export default {
       activefive: null,
       activesix: null,
       activeseven: null,
-      sctiveoneone:"100",
-      sctiveonetwo:"100",
+      sctiveoneone: "100",
+      sctiveonetwo: "100",
       HOUSE_HUXING: "", //房源户型
       SELL_PRICE: "", //房源售价
       HOUSE_RENTAL: "", //房源租金
@@ -196,21 +198,21 @@ export default {
       HOUSE_AGE: "", //楼零
       BROKER_DUTY: "", //经济人职务
 
-      keyword:"", //搜索关键字
-      areaId:"", //区域
-      districtId:"",//片区
-      houseForm:"", //类型
-      maxBuildArea:"", //最大面积
-      maxPrice:"", //最大价格
-      minBuildArea:"", //最小面积
-      minPrice:"", //最小价格
-      roomsNum:"", //户型
-      maxRentPrice:"",//最大租金
-      minRentPrice:"",//最小租金
-      textcontent:"",//搜索的内容
+      keyword: "", //搜索关键字
+      areaId: "", //区域
+      districtId: "", //片区
+      houseForm: "", //类型
+      maxBuildArea: "", //最大面积
+      maxPrice: "", //最大价格
+      minBuildArea: "", //最小面积
+      minPrice: "", //最小价格
+      roomsNum: "", //户型
+      maxRentPrice: "", //最大租金
+      minRentPrice: "", //最小租金
+      textcontent: "", //搜索的内容
 
       id: 1, //1=我要房子，2=我要租房
-      site: window.localStorage.site,
+      site:"",
       bannerimg: "", //bannerimg
       page: "1",
       url: "", //推荐链接
@@ -224,8 +226,8 @@ export default {
       remover: false, //控制滑动效果
       active: "5", //过滤控制
       taberlist: ["区域", "户型", "价格", "面积", "类型"],
-      erealistone:"",//帅选区域列表
-      erealisttwo:"", //帅选区域列表
+      erealistone: "", //帅选区域列表
+      erealisttwo: "", //帅选区域列表
       tjlist: "", //推荐列表
       sslist: [], //搜索列表
       sxurl: "", //筛选url
@@ -235,8 +237,8 @@ export default {
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
   },
-  created(){
-    this.$store.state.activeindex="6"
+  created() {
+    this.$store.state.activeindex = "6";
     this.id = this.$route.query.id;
     if (this.id == "2") {
       this.taberlist = ["区域", "户型", "租金", "面积"];
@@ -244,11 +246,14 @@ export default {
     } else {
       this.sxurl = ["HOUSE_HUXING", "HOUSE_AREA", "HOUSE_TYPE"];
     }
-    this._querysone();
+    locationmap(this).then(() => {
+      this.site=window.localStorage.site
+      this._querysone();
+    })
   },
   methods: {
-    testbtn(){
-      this.activefive=null
+    testbtn() {
+      this.activefive = null;
     },
     loadMore() {
       if (this.page !== "1") {
@@ -257,7 +262,7 @@ export default {
         Toast({
           message: "正在加载。。。",
           position: "bottom",
-          duration:500
+          duration: 500
         });
         setTimeout(() => {
           this.loading = false;
@@ -291,60 +296,63 @@ export default {
       this._listtop();
       this._erlist();
     },
-    btndistricts(item,index){
-      this.erealisttwo=item.districts
-      this.sctiveoneone=index
-      this.sctiveonetwo='100'
-      this.areaId=item.id
-      this.taberlist[0]=item.name
+    btndistricts(item, index) {
+      this.erealisttwo = item.districts;
+      this.sctiveoneone = index;
+      this.sctiveonetwo = "100";
+      this.areaId = item.id;
+      this.taberlist[0] = item.name;
     },
-    btndistrictstwo(item,index){
-      this.sctiveonetwo=index
-      this.districtId=item.id
-      this.page="1"
-      this.sslist=[]
-      this._erlist()
-      this.active = "5";
-      this.movesetnumber = false;
-      this.taberlist[0]=item.name
-    },
-    btndistrictsone(){
-      this.sctiveoneone='100'
-      this.sctiveonetwo='100'
-      this.erealisttwo=""
-      this.districtId=""
-      this.areaId=""
-      this.page="1"
-      this.sslist=[]
+    btndistrictstwo(item, index) {
+      this.sctiveonetwo = index;
+      this.districtId = item.id;
+      this.page = "1";
+      this.sslist = [];
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[0]="区域"
+      this.taberlist[0] = item.name;
     },
-    btndistrictstwotwo(){
-      this.sctiveonetwo='100'
-      this.districtId=""
-      this.page="1"
-      this.sslist=[]
+    btndistrictsone() {
+      this.sctiveoneone = "100";
+      this.sctiveonetwo = "100";
+      this.erealisttwo = "";
+      this.districtId = "";
+      this.areaId = "";
+      this.page = "1";
+      this.sslist = [];
+      this._erlist();
+      this.active = "5";
+      this.movesetnumber = false;
+      this.taberlist[0] = "区域";
+    },
+    btndistrictstwotwo() {
+      this.sctiveonetwo = "100";
+      this.districtId = "";
+      this.page = "1";
+      this.sslist = [];
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
     },
     //获取帅选列表
     _listtop() {
-      this.$http.get(this.$url.URL.AREADISTRICTS+"/"+this.site)//获取城市以下的片区
-      .then(res=>{
-        this.erealistone=res.data.data
-        this.erealisttwo=[]
-      })
-      this.$http.get(this.$url.URL.DICTIONARYTWO+"/HOUSE_RENTAL/"+this.site)//房源租金
-      .then((res)=>{
-        this.HOUSE_RENTAL=res.data.data
-      })
-      this.$http.get(this.$url.URL.DICTIONARYTWO+"/SELL_PRICE/"+this.site)//房源售价
-      .then((res)=>{
-        this.SELL_PRICE=res.data.data
-      })
+      this.$http
+        .get(this.$url.URL.AREADISTRICTS + "/" + this.site) //获取城市以下的片区
+        .then(res => {
+          this.erealistone = res.data.data;
+          this.erealisttwo = [];
+        });
+      this.$http
+        .get(this.$url.URL.DICTIONARYTWO + "/HOUSE_RENTAL/" + this.site) //房源租金
+        .then(res => {
+          this.HOUSE_RENTAL = res.data.data;
+        });
+      this.$http
+        .get(this.$url.URL.DICTIONARYTWO + "/SELL_PRICE/" + this.site) //房源售价
+        .then(res => {
+          this.SELL_PRICE = res.data.data;
+        });
       this.$http.post(this.$url.URL.DICTIONARYS, this.sxurl).then(response => {
         this.houselist = response.data.data;
 
@@ -376,41 +384,41 @@ export default {
       });
     },
     _erlist() {
-      var seturl=""
+      var seturl = "";
       this.id == "1"
         ? (this.urlone = this.$url.URL.HOUSEQUERYONE)
         : (this.urlone = this.$url.URL.RENTHOUSEQUERYS); //搜索list
-      this.id=="1"
-        ? seturl={
-          scity: this.site,
-          pageNo: this.page,
-          pageSize: "10",
-          keyword: this.keyword, //搜索关键字
-          areaId: this.areaId, //区域
-          districtId:this.districtId,// 片区
-          houseForm: this.houseForm.value, //类型
-          maxBuildArea: this.maxBuildArea, //最大面积
-          maxPrice: this.maxPrice, //最大价格
-          minBuildArea: this.minBuildArea, //最小面积
-          minPrice: this.minPrice, //最小价格
-          roomsNum: this.roomsNum.value, //户型
-        }
-        : seturl={
-          scity: this.site,
-          pageNo: this.page,
-          pageSize: "10",
-          keyword: this.keyword, //搜索关键字
-          areaId: this.areaId, //区域
-          districtId:this.districtId,// 片区
-          houseForm: this.houseForm.value, //类型
-          maxBuildArea: this.maxBuildArea, //最大面积
-          minBuildArea: this.minBuildArea, //最小面积
-          roomsNum: this.roomsNum.value, //户型
-          maxRentPrice:this.maxRentPrice,//最大租金
-          minRentPrice:this.minRentPrice,//最小租金
-        }
+      this.id == "1"
+        ? (seturl = {
+            scity: this.site,
+            pageNo: this.page,
+            pageSize: "10",
+            keyword: this.keyword, //搜索关键字
+            areaId: this.areaId, //区域
+            districtId: this.districtId, // 片区
+            houseForm: this.houseForm.value, //类型
+            maxBuildArea: this.maxBuildArea, //最大面积
+            maxPrice: this.maxPrice, //最大价格
+            minBuildArea: this.minBuildArea, //最小面积
+            minPrice: this.minPrice, //最小价格
+            roomsNum: this.roomsNum.value //户型
+          })
+        : (seturl = {
+            scity: this.site,
+            pageNo: this.page,
+            pageSize: "10",
+            keyword: this.keyword, //搜索关键字
+            areaId: this.areaId, //区域
+            districtId: this.districtId, // 片区
+            houseForm: this.houseForm.value, //类型
+            maxBuildArea: this.maxBuildArea, //最大面积
+            minBuildArea: this.minBuildArea, //最小面积
+            roomsNum: this.roomsNum.value, //户型
+            maxRentPrice: this.maxRentPrice, //最大租金
+            minRentPrice: this.minRentPrice //最小租金
+          });
       this.$http
-        .post(this.urlone,seturl)
+        .post(this.urlone, seturl)
         .then(res => {
           for (let i = 0; i < res.data.data.length; i++) {
             res.data.data[i].houseTag = res.data.data[i].houseTag.split(",");
@@ -432,160 +440,166 @@ export default {
     },
     itemonebtn(item, index) {
       this.activeone = index;
-      this.roomsNum=item;
+      this.roomsNum = item;
     },
     itemtwobtn(item, index) {
       this.activetwo = index;
-      var value=item.value.split("-")
-      this.minRentPrice =value[0]
-      this.maxRentPrice =value[1]
+      var value = item.value.split("-");
+      this.minRentPrice = value[0];
+      this.maxRentPrice = value[1];
     },
     itemthreebtn(item, index) {
       this.activethree = index;
-      var value = item.value.split("-")
-      this.minBuildArea=value[0]
-      this.maxBuildArea=value[1]
+      var value = item.value.split("-");
+      this.minBuildArea = value[0];
+      this.maxBuildArea = value[1];
     },
     itemfourbtn(item, index) {
       this.activefour = index;
-      this.roomsNum=item;
+      this.roomsNum = item;
     },
-    roomsNumbtn(){
-      this.page="1"
-      this.sslist=[];
+    roomsNumbtn() {
+      this.page = "1";
+      this.sslist = [];
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[1]=this.roomsNum.name
+      this.taberlist[1] = this.roomsNum.name;
     },
-    roomsNumbtnone(){
-      this.page="1"
-      this.roomsNum="";
-      this._erlist();
-      this.active = "5";
-      this.movesetnumber = false;  
-      this.taberlist[1]="户型"
-    },
-    itemfivebtn(item, index){
-      this.activefive = index;   
-      var value=item.value.split("-")
-      this.minPrice=value[0]
-      this.maxPrice=value[1]
-    },
-    rentPriceonebtn(){//租房价格请求
-      this.page="1"
-      this.minRentPrice=""
-      this.maxRentPrice=""
-      this.sslist=[];
+    roomsNumbtnone() {
+      this.page = "1";
+      this.roomsNum = "";
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[2]="价格"
+      this.taberlist[1] = "户型";
     },
-    Priceonebtn(){//价格请求
-      this.page="1"
-      this.minPrice=""
-      this.maxPrice=""
-      this.sslist=[];
+    itemfivebtn(item, index) {
+      this.activefive = index;
+      var value = item.value.split("-");
+      this.minPrice = value[0];
+      this.maxPrice = value[1];
+    },
+    rentPriceonebtn() {
+      //租房价格请求
+      this.page = "1";
+      this.minRentPrice = "";
+      this.maxRentPrice = "";
+      this.sslist = [];
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[2]="价格"
+      this.taberlist[2] = "价格";
     },
-    rentPricebtn(){
+    Priceonebtn() {
+      //价格请求
+      this.page = "1";
+      this.minPrice = "";
+      this.maxPrice = "";
+      this.sslist = [];
+      this._erlist();
+      this.active = "5";
+      this.movesetnumber = false;
+      this.taberlist[2] = "价格";
+    },
+    rentPricebtn() {
       var reg = /^[0-9]+.?[0-9]*$/;
-      if (reg.test(this.minRentPrice)&&reg.test(this.maxRentPrice)) {
-        if(parseInt(this.minRentPrice)<parseInt(this.maxRentPrice)){
-          this.page="1"
-          this.sslist=[];
+      if (reg.test(this.minRentPrice) && reg.test(this.maxRentPrice)) {
+        if (parseInt(this.minRentPrice) < parseInt(this.maxRentPrice)) {
+          this.page = "1";
+          this.sslist = [];
           this._erlist();
           this.active = "5";
           this.movesetnumber = false;
-          this.taberlist[2]=this.minRentPrice+"-"+this.maxRentPrice
-        }else{
-          MessageBox.alert("输入的最小金额必须小于最大金额")
+          this.taberlist[2] = this.minRentPrice + "-" + this.maxRentPrice;
+        } else {
+          MessageBox.alert("输入的最小金额必须小于最大金额");
         }
-      }else{
-        MessageBox.alert("输入的价格有误")
+      } else {
+        MessageBox.alert("输入的价格有误");
       }
     },
-    Pricebtn(){//价格请求
+    Pricebtn() {
+      //价格请求
       var reg = /^[0-9]+.?[0-9]*$/;
-      if (reg.test(this.minPrice)&&reg.test(this.maxPrice)) {
-        if(parseInt(this.minPrice)<parseInt(this.maxPrice)){
-          this.sslist=[];
-          this.page="1"
+      if (reg.test(this.minPrice) && reg.test(this.maxPrice)) {
+        if (parseInt(this.minPrice) < parseInt(this.maxPrice)) {
+          this.sslist = [];
+          this.page = "1";
           this._erlist();
           this.active = "5";
           this.movesetnumber = false;
-          this.taberlist[2]=this.minPrice+"-"+this.maxPrice
-        }else{
-          MessageBox.alert("输入的最小金额必须小于最大金额")
+          this.taberlist[2] = this.minPrice + "-" + this.maxPrice;
+        } else {
+          MessageBox.alert("输入的最小金额必须小于最大金额");
         }
-      }else{
-        MessageBox.alert("输入的价格有误")
+      } else {
+        MessageBox.alert("输入的价格有误");
       }
     },
     itemsixbtn(item, index) {
       this.activesix = index;
-      var value = item.value.split("-")
-      this.minBuildArea=value[0]
-      this.maxBuildArea=value[1]
+      var value = item.value.split("-");
+      this.minBuildArea = value[0];
+      this.maxBuildArea = value[1];
     },
-    BuildAreaonebtn(){//面积筛选不限
-      this.minBuildArea="";
-      this.maxBuildArea=""
-      this.sslist=[];
-      this.page="1"
+    BuildAreaonebtn() {
+      //面积筛选不限
+      this.minBuildArea = "";
+      this.maxBuildArea = "";
+      this.sslist = [];
+      this.page = "1";
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[3]="面积"
+      this.taberlist[3] = "面积";
     },
-    BuildAreabtn(){//面积筛选确定
-      this.sslist=[];
-      this.page="1"
+    BuildAreabtn() {
+      //面积筛选确定
+      this.sslist = [];
+      this.page = "1";
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[3]=this.minBuildArea+"-"+this.maxBuildArea
-      
+      this.taberlist[3] = this.minBuildArea + "-" + this.maxBuildArea;
     },
     showbtn(ev) {
-        this.$store.searchname=this.textcontent
-        this.$router.push({path:'/searchlist/', query: {id:this.id}})
+      this.$store.searchname = this.textcontent;
+      this.$router.push({ path: "/searchlist/", query: { id: this.id } });
     },
     itemsevenbtn(item, index) {
       this.activeseven = index;
-      this.houseForm=item
+      this.houseForm = item;
     },
-    houseFormonebtn(){//类型筛选不限
-      this.houseForm=""
-      this.sslist=[];
-      this.page="1"
+    houseFormonebtn() {
+      //类型筛选不限
+      this.houseForm = "";
+      this.sslist = [];
+      this.page = "1";
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[4]="类型"
+      this.taberlist[4] = "类型";
     },
-     houseFormbtn(){//类型筛选确定
-      this.sslist=[];
-      this.page="1"
+    houseFormbtn() {
+      //类型筛选确定
+      this.sslist = [];
+      this.page = "1";
       this._erlist();
       this.active = "5";
       this.movesetnumber = false;
-      this.taberlist[4]=this.houseForm.name
+      this.taberlist[4] = this.houseForm.name;
     },
     handleScroll() {
       var scrollTop =
         window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-        var taberlist=""
-        if(this.$route.path=="/renting/"){
-          taberlist=document.querySelectorAll(".taberlist")[1]
-        }
-      
+      var taberlist = "";
+      if (this.$route.path == "/renting") {
+        taberlist = document.querySelectorAll(".taberlist")[1];
+      }
+
       if (scrollTop >= "0" && scrollTop <= "40") {
         this.homemove = 10;
         this.movesetnumber = false;
@@ -604,21 +618,27 @@ export default {
       } else {
         this.homemove = 1;
       }
-      var scolly=taberlist.offsetTop-document.body.scrollTop
-      var scrottop=window.document.documentElement.getBoundingClientRect().width/375*44
-      if (scolly<=scrottop) {
-        this.movesnumbertwo=true;
+      var scolly = taberlist.offsetTop - document.body.scrollTop;
+      var scrottop =
+        window.document.documentElement.getBoundingClientRect().width /
+        375 *
+        44;
+      if (scolly <= scrottop) {
+        this.movesnumbertwo = true;
       } else {
-        this.movesnumbertwo=false;
+        this.movesnumbertwo = false;
         this.movesetnumber = false;
         this.active = "5";
       }
     },
-    shuaixuan(item,index) {
+    shuaixuan(item, index) {
       this.active = index;
       this.movesetnumber = true;
-      this.movesnumbertwo=true;
-      var scrottop=window.document.documentElement.getBoundingClientRect().width/375*365
+      this.movesnumbertwo = true;
+      var scrottop =
+        window.document.documentElement.getBoundingClientRect().width /
+        375 *
+        365;
       window.scrollTo(0, scrottop);
     },
     yingcangbtn() {
@@ -634,8 +654,7 @@ export default {
         query: { id: this.id }
       });
     }
-  },
-  
+  }
 };
 </script>
 <style scoped lang="less">
@@ -662,28 +681,28 @@ export default {
 .shuaixuan {
   width: 100%;
 }
-.shuaixuanss{
-  height:100%;
-  width:100%;
+.shuaixuanss {
+  height: 100%;
+  width: 100%;
   position: fixed;
-  top:0.44rem;
-  z-index:9999;
-  background:rgba(1, 1, 1, 0.5);
+  top: 0.44rem;
+  z-index: 9999;
+  background: rgba(1, 1, 1, 0.5);
 }
-.shuaixuanone{
-  border-top:0.005rem solid @bordercolor_1;
+.shuaixuanone {
+  border-top: 0.005rem solid @bordercolor_1;
   position: fixed;
-  top:0.79rem;
-  z-index:999999;
+  top: 0.79rem;
+  z-index: 999999;
 }
-.activecolor{
-  color:@colorone !important;
+.activecolor {
+  color: @colorone !important;
 }
-.shuaixuantwo{
-  border-top:0.005rem solid @bordercolor_1;
+.shuaixuantwo {
+  border-top: 0.005rem solid @bordercolor_1;
   position: fixed;
-  top:0.79rem;
-   z-index:999999;
+  top: 0.79rem;
+  z-index: 999999;
 }
 .searchboxwarponea {
   width: 100%;
@@ -734,19 +753,19 @@ export default {
   background-color: #f2f2f2;
   border-radius: 0.04rem;
 }
-.taberlist{
-  background:@colorthree;
+.taberlist {
+  background: @colorthree;
 }
 .swiperitem {
   height: 2rem;
 }
-.swiperitemitem{
-  width:100%;
-  height:100%;
-   img{
-     width:100%;
-     height:100%;
-   }
+.swiperitemitem {
+  width: 100%;
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 #recommend {
   width: 100%;
@@ -770,31 +789,31 @@ export default {
   // background: url(../../imgs/home/banner.png) no-repeat;
   background-size: 100% 100%;
 }
-.swiperfangitemtwo>div{
-  margin-top:0.09rem;
+.swiperfangitemtwo > div {
+  margin-top: 0.09rem;
 }
-.swiperfangitemtwo>div:nth-of-type(1){
-  margin-top:0.2rem;
+.swiperfangitemtwo > div:nth-of-type(1) {
+  margin-top: 0.2rem;
 }
 .tabercontent {
   margin-top: 0.25rem;
 }
 .taberlists {
   position: fixed;
-  top:0.44rem;
+  top: 0.44rem;
   border: none;
   background: #f9f9f9;
   z-index: 99999;
 }
 .cnxhlist {
   margin-bottom: 0;
-  min-height:1000px;
+  min-height: 1000px;
 }
 .shuaixuanonesd {
   position: fixed;
   top: 0.44rem;
   z-index: 99999;
-  width:100%;
+  width: 100%;
 }
 .taberclass {
   width: 25% !important;
@@ -841,8 +860,8 @@ export default {
 .gobtnclass {
   background: @colorone;
 }
-.mint-msgbox-wrapper{
-  z-index:99999;
+.mint-msgbox-wrapper {
+  z-index: 99999;
 }
 </style>
 

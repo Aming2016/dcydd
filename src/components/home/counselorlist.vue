@@ -59,7 +59,7 @@ export default {
       });
     },
     quizpagebtn(item) {
-      if(window.localStorage.token){
+      if(window.localStorage.dc_token){
         this.$store.counseloritem=item
       this.$router.push("/quizpage/2");
       }else{

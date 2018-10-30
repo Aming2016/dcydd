@@ -50,7 +50,8 @@
       <ul class="ul_1" v-show="gerenxinxinum">
         <li>
            <div>姓名</div>
-           <div>{{data.linkman}}</div>
+           <div v-if="id=='3'">{{data.name}}</div>
+           <div v-else>{{data.linkman}}</div>
         </li>
         <li>
            <div>电话</div>
@@ -58,7 +59,7 @@
         </li>
         <li>
            <div>城市</div>
-           <div>{{data.cityCode}}</div>
+           <div>{{data.cityName}}</div>
         </li>
         <li>
            <div>小区</div>
@@ -70,17 +71,17 @@
         </li>
         <li v-if="id=='3'">
            <div>业务类型</div>
-           <div id="div_id_12">{{data.applicationType }}</div>
+           <div id="div_id_12">{{data.loanAgencyTypeName }}</div>
         </li>
       </ul>
       <div id="div_id_3" @click="imgbtnone">
         <img src="../../imgs/mine/xiajiantou.png" alt="" v-if="imgbtn">
         <img src="../../imgs/mine/shangjiantou.png" alt="" v-else>
       </div>
-      <div id="div_id_4">
+      <div id="div_id_4" v-if="data.broker">
         跟进人
       </div>
-      <div id="div_id_5" @click="brokeritem">
+      <div id="div_id_5" @click="brokeritem" v-if="data.broker">
         <div>
           <img :src="data.broker.photo|headimgfilter" alt="">
         </div>
@@ -204,17 +205,17 @@ export default {
         .then(res => {
           if (res.data.status == "1") {
             if (res.data.data.broker) {
-              console.log("ddddd")
-              res.data.data.broker.emplFlag = res.data.data.broker.emplFlag.split(
-                ","
-              );
+              if (res.data.data.broker.emplFlag) {
+                res.data.data.broker.emplFlag = res.data.data.broker.emplFlag.split(
+                  ","
+                );
+              }
             }
             if (res.data.data.house) {
               res.data.data.house.houseTag = res.data.data.house.houseTag.split(
                 ","
               );
             }
-
             this.data = res.data.data;
             console.log(this.data);
           } else {

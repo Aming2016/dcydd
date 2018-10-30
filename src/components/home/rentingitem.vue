@@ -1,21 +1,22 @@
 <template>
     <div class="rentingitem">
         <div class="titlename" :class="{searchboxwarpone:homemove==1,searchboxwarponea:homemove==2,searchboxwarponeb:homemove==3,searchboxwarponec:homemove==4,searchboxwarponed:homemove==5}">
-            <img class="gorentingimg" src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
+            <img v-if="homemove>5" class="gorentingimg" src="../../imgs/home/fanhuitwo.png" alt="" @click="gohomebtn">
+            <img v-else class="gorentingimg" src="../../imgs/home/fanhui.png" alt="" @click="gohomebtn">
             <img class="titleimgone" v-if="imgone=='1'" src="../../imgs/home/shouchangwxz.png" alt="" @click="collectbtn">
             <img class="titleimgone" v-else-if="imgone=='2'" src="../../imgs/home/weixuanzhes.png" alt="" @click="collectbtn">
             <img class="titleimgone" v-else src="../../imgs/home/shoucangxz.png" alt=""  @click="collectonebtn">
-            <img class="fengxiangimg" v-if="imgfour=='1'" src="../../imgs/home/fengxiang.png" alt="">
-            <img class="fengxiangimg" v-else-if="imgfour=='2'" src="../../imgs/home/fengxianghese.png" alt="">
+            <!-- <img class="fengxiangimg" v-if="imgfour=='1'" src="../../imgs/home/fengxiang.png" alt="">
+            <img class="fengxiangimg" v-else-if="imgfour=='2'" src="../../imgs/home/fengxianghese.png" alt=""> -->
             <img class="titleimgtwo" v-if="imgtwo=='1'&&id=='1'" src="../../imgs/home/daikanliebiaobaise.png" alt="" @click="daikanlistbtn">
             <img class="titleimgtwo" v-else-if="imgtwo=='2'&&id=='1'" src="../../imgs/home/daikanliebiaohuise.png" alt="" @click="daikanlistbtn">
             <img class="titleimgthree" v-if="imgthree=='1'&&id=='1'" @click="comparisonbtn" src="../../imgs/home/duibiliebiaobai.png" alt="">
             <img class="titleimgthree" v-else-if="imgthree=='2'&&id=='1'" @click="comparisonbtn" src="../../imgs/home/duibiliebiaohuise.png" alt="">
-            <div class="div_1_one" v-show="id=='1'&&addCount.contrastCount!='0'&&addCount.contrastCount!=undefined">{{addCount.contrastCount}}</div>
-            <div class="div_1_one" v-show="id=='1'&&addCount.appointCount!='0'&&addCount.appointCount!=undefined" style="right:0.75rem;">{{addCount.appointCount}}</div>
+            <div class="div_1_one" v-show="id=='1'&&addCount.contrastCount!='0'&&addCount.contrastCount!=undefined" style="right:0.75rem;">{{addCount.contrastCount}}</div>
+            <div class="div_1_one" v-show="id=='1'&&addCount.appointCount!='0'&&addCount.appointCount!=undefined">{{addCount.appointCount}}</div>
         </div>
          <mt-swipe :auto="3000" class="swiperitem" :showIndicators="false" @change="handleChange">
-            <mt-swipe-item v-for="item in dataone.housePicList" class="swiperitembox">
+            <mt-swipe-item v-for="(item,index) in dataone.housePicList" :key="index" class="swiperitembox">
                     <img :src="item" alt="" srcset="">
             </mt-swipe-item>
         </mt-swipe>
@@ -63,6 +64,8 @@
             <li>电梯：<span>{{dataone.elevator}}</span></li>
             <li v-if="id=='1'">所在楼层：<span>{{dataone.floor}}</span></li>
             <li v-else>房屋类型：<span>{{dataone.houseForm}}</span></li>
+            <li>现状：<span>{{dataone.houseCurrentStatus}}位</span></li>
+            <li>用途：<span>{{dataone.houseUse}}位</span></li>
             <li v-if="id=='1'">首付预算：<span>{{dataone.paymentBudget}}</span></li>
             <li v-else>家具：<span id="id_11">{{dataone.houseElec}}</span></li>
         </ul>
@@ -115,7 +118,7 @@
             <div @click="hotdisitembtn">更多小区房源 <img src="../../imgs/home/gengduojiantou.png" alt=""></div>    
         </div>
         <div class="cnxhlist">
-            <div class="cnxhlistitem"  @click="listbtn(item)" v-for="item in housinglist">
+            <div class="cnxhlistitem"  @click="listbtn(item)" v-for="(item,index) in housinglist" :key="index">
                 <div class="cnxhcontnet">
                     <div class="cnxhcontnetleft">
                         <img v-lazy="item.housePic" alt="">
@@ -131,7 +134,7 @@
                             {{item.houseType}} {{item.builtArea}}m² 
                         </div>
                         <div class="cnxhconterfour">
-                            <div v-for="item in item.houseTag ">{{item}}</div>
+                            <div v-for="(item,index) in item.houseTag " :key="index">{{item}}</div>
                         </div>
                          <div class="cnxhconterfive" v-if="id=='1'">
                             <div v-if="id='1'">{{item.saleTotal}}万</div>
@@ -151,7 +154,7 @@
   infinite-scroll-distance="10"
   infinite-scroll-immediate-check="true"
    style=" margin-bottom:0.5rem;">
-            <div class="cnxhlistitem" v-for="item in listthree" @click="listbtn(item)">
+            <div class="cnxhlistitem" v-for="(item,index) in listthree" @click="listbtn(item)" :key="index">
                 <div class="cnxhcontnet">
                     <div class="cnxhcontnetleft">
                         <img v-lazy="item.housePic"  alt="">
@@ -167,7 +170,7 @@
                             {{item.roomsNum}}房{{item.livingRoomNum}}厅 {{item.builtArea}}m² 
                         </div>
                         <div class="cnxhconterfour">
-                            <div v-for="item in item.houseTag ">{{item}}</div>
+                            <div v-for="(item,index) in item.houseTag" :key="index">{{item}}</div>
                         </div>
                          <div class="cnxhconterfive" v-if="id=='1'">
                             <div v-if="id='1'">{{item.saleTotal}}万</div>
@@ -204,7 +207,7 @@
                      </div>
                 </div>
                 <ul class="phonebtn">
-                    <li>
+                    <li @click="phonebtns">
                         <a :href="tel">
                         <img src="../../imgs/home/dianhua.png" alt="">
                         电话
@@ -238,6 +241,7 @@
 </template>
 <script>
 import { Toast } from "mint-ui";
+import router from "../../router";
 import { MessageBox } from "mint-ui";
 export default {
   data() {
@@ -258,7 +262,7 @@ export default {
       warpdivbl: false,
       warpdivbltwo: false,
       homemove: 10,
-      site:"",
+      site: "",
       sdid: "", //获取标详情用
       dataone: "", //获取的标详情
       urlone: "", //详情接口
@@ -276,32 +280,93 @@ export default {
     this.$store.state.activeindex = "6";
     this.id = this.$route.query.id;
     this.site = this.$route.query.scity;
-    if(this.$route.query.scity){
-      this.site=this.$route.query.scity
-      window.localStorage.site=this.$route.query.scity
-    }else{
-      this.site=window.localStorage.site
+    if (this.$route.query.scity) {
+      this.site = this.$route.query.scity;
+      window.localStorage.site = this.$route.query.scity;
+    } else {
+      this.site = window.localStorage.site;
     }
     this.sdid = this.$route.params.id;
     window.addEventListener("scroll", this.handleScroll);
     this._querys();
     this._querysfive(); //房源清单列表数据统计
   },
+  mounted() {},
   methods: {
+    phonebtns(){
+      var objct = {
+          data: {},
+          type: "PHONE"
+        };
+        this.$addevent(objct);
+    },
     _querysfive() {
       //房源清单列表数据统计
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.$http.get(this.$url.URL.HOUSEDETAILCOUNT).then(res => {
           this.addCount = res.data.data;
         });
       }
     },
+    //分享授权接口
+    _wxfx() {
+      var saleTotal = "";
+      if (this.id == "1") {
+        saleTotal = this.dataone.saleTotal + "万";
+      } else {
+        saleTotal = this.dataone.rentPrice + "元/月";
+      }
+      var wxfx = {
+        url: window.location.href,
+        imgurl: this.dataone.housePicList[0],
+        title: this.dataone.areaName + " " + this.dataone.buildName,
+        content:
+          this.dataone.houseType +
+          " " +
+          this.dataone.builtArea +
+          "㎡" +
+          " " +
+          saleTotal
+      };
+      this.$wxfx(wxfx);
+    },
+
+    // beforeRouteEnter() {
+    //   router.beforeEach((to, from, next) => {
+    //     var path = to.path;
+    //     console.log(path)
+    //     if (path.split("/")[1] == "rentingitem") {
+    //       console.log("ddddddddddddddddddddddddd")
+    //       console.log(window.location.href + "&scity=" + window.localStorage.site)
+    //       var saleTotal = "";
+    //       if (this.id == "1") {
+    //         saleTotal = this.dataone.saleTotal + "万";
+    //       } else {
+    //         saleTotal = this.dataone.rentPrice + "元/月";
+    //       }
+    //       var wxfx = {
+    //         url: window.location.href + "&scity=" + window.localStorage.site,
+    //         imgurl: this.dataone.housePicList[0],
+    //         title: this.dataone.areaName + " " + this.dataone.buildName,
+    //         content:
+    //           this.dataone.houseType +
+    //           " " +
+    //           this.dataone.builtArea +
+    //           "㎡" +
+    //           " " +
+    //           saleTotal
+    //       };
+    //       this.$wxfx(wxfx);
+    //     }
+    //     next();
+    //   });
+    // },
     handleChange(index) {
       this.activeindex = index + 1;
     },
     collectbtn() {
       //点击收藏
-      if (window.localStorage.token == undefined) {
+      if (window.localStorage.dc_token == undefined) {
         this.$router.push("/register");
       } else {
         this.imgone = parseInt(this.imgone) + 10;
@@ -310,16 +375,18 @@ export default {
     },
     messagebtn() {
       //点击跳转聊天页面
-      if (window.localStorage.token) {
-        console.log(this.dataone);
-        var set = {};
-        set.username = this.dataone.broker.chatUsername;
-        set.nickName = this.dataone.broker.emplName;
-        this.$store.dispatch("message", set);
-        this.$router.push("/abmessage");
-      } else {
-        this.$router.push("/register");
-      }
+      this.$http
+        .post(this.$url.URL.HUANXINBROKERREGUSER, {
+          chatUsername: this.dataone.broker.chatUsername
+        })
+        .then(res => {
+          if (window.localStorage.dc_token) {
+            this.$store.dispatch("pushfriendlist", this.dataone.broker);
+            this.$router.push("/abmessage");
+          } else {
+            this.$router.push("/register");
+          }
+        });
     },
     _querysadd() {
       //点击收藏querys
@@ -348,7 +415,7 @@ export default {
     },
     contrastdeletebtn() {
       //加入对比列表
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.contrastnumber = true;
         this.$http
           .put(this.$url.URL.CONTRASTJOID, {
@@ -374,7 +441,7 @@ export default {
       });
     },
     lookrecordbtn() {
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.$store.state.daikanlilv = [
           this.dataone.day7Num,
           this.dataone.totalSeeNum
@@ -441,15 +508,21 @@ export default {
         .get(this.urlone + "/" + this.site + "/" + this.sdid)
         .then(res => {
           this.dataone = res.data.data;
-          if (this.dataone.px == 0 && this.dataone.py == 0) {
-            this.mapcontent[0] = JSON.parse(window.localStorage.mapxy).lng;
-            this.mapcontent[1] = JSON.parse(window.localStorage.mapxy).lat;
-          } else {
-            this.mapcontent[0] = this.dataone.px;
-            this.mapcontent[1] = this.dataone.py;
-          }
+          this._wxfx(); //分享授权接口
+          console.log(JSON.parse(window.localStorage.mapxy));
+          try {
+            if (this.dataone.px == 0 && this.dataone.py == 0) {
+              this.mapcontent[0] = JSON.parse(window.localStorage.mapxy).lng;
+              this.mapcontent[1] = JSON.parse(window.localStorage.mapxy).lat;
+            } else {
+              this.mapcontent[0] = this.dataone.px;
+              this.mapcontent[1] = this.dataone.py;
+            }
+          } catch (error) {}
+
           this.contrastnumber = this.dataone.isComparison;
           this.yuyuekanfang = this.dataone.isAppoint;
+          console.log(this.yuyuekanfang);
           if (this.yuyuekanfang) {
             this.yuyuekanfangname = "已加入待看";
           } else {
@@ -490,7 +563,7 @@ export default {
         });
     },
     comparisonbtn() {
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.$router.push("/comparison");
       } else {
         this.$router.push("/register");
@@ -608,17 +681,27 @@ export default {
       }
     },
     gohomebtn() {
-      this.$router.go(-1);
+      if (this.$route.query.scity) {
+        this.$router.push("/");
+      } else {
+        this.$router.go(-1);
+      }
     },
     subscribeitem() {
       //加入待看列表
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         if (!this.yuyuekanfang) {
           this.warpdivbltwo = true;
         }
       } else {
         this.$router.push("/register");
       }
+    }
+  },
+  destroyed() {
+    if (window.localStorage.scity) {
+      window.localStorage.site = window.localStorage.scity;
+      window.localStorage.removeItem("scity");
     }
   }
 };
@@ -691,7 +774,7 @@ export default {
   height: 0.23rem;
   position: absolute;
   top: 0.105rem;
-  right: 0.45rem;
+  right: 0.1rem;
   display: inline-block;
   z-index: 999;
 }
@@ -699,22 +782,14 @@ export default {
   height: 0.23rem;
   position: absolute;
   top: 0.105rem;
-  right: 0.78rem;
+  right: 0.45rem;
   z-index: 999;
 }
 .titleimgthree {
   height: 0.23rem;
   position: absolute;
   top: 0.105rem;
-  right: 1.1rem;
-  z-index: 999;
-}
-.fengxiangimg {
-  height: 0.23rem;
-  position: absolute;
-  top: 0.105rem;
-  right: 0.12rem;
-  display: inline-block;
+  right: 0.78rem;
   z-index: 999;
 }
 .color_5 {
@@ -1037,7 +1112,7 @@ export default {
   text-align: center;
   line-height: 0.13rem;
   border-radius: 50%;
-  right: 1.05rem;
+  right: 0.4rem;
   top: 0.08rem;
   z-index: 999999;
 }

@@ -14,7 +14,7 @@ export default {
   data(){
       return{
           dataname:"昵称",
-          mydata:JSON.parse(window.localStorage.mydata),
+          mydata:JSON.parse(window.localStorage.dc_mydata),
           mydataname:""
       }
   },
@@ -31,7 +31,7 @@ export default {
      _myquerys(){
         this.$http.get(this.$url.URL.MINEDATAINFO)
         .then(res=>{
-            window.localStorage.mydata=JSON.stringify(res.data.data)
+            window.localStorage.dc_mydata=JSON.stringify(res.data.data)
             this.$router.back(-1)
         })
      }

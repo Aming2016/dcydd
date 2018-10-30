@@ -122,12 +122,12 @@ export default {
         if(this.titlenumber=='0'){
            var html1=`<div class="bubble-2 bubble">
                       <p class="name">${obj.name}</p>
-                      <p class="count">${obj.formatAvgPrice}套</p>
+                      <p class="count">${obj.formatAvgPrice}</p>
                     </div>`;
         //片区级别
         var html2=`<div class="bubble-2 bubble">
                       <p class="name">${obj.name}</p>
-                      <p class="count">${obj.formatAvgPrice}套</p>
+                      <p class="count">${obj.formatAvgPrice}</p>
                     </div>`;
 
         //小区级别
@@ -140,7 +140,7 @@ export default {
                             data-formatAvgPrice=${obj.formatAvgPrice}
                             data-formatSaleCount=${obj.formatSaleCount}
                             data-buildSdid=${obj.buildSdid}>
-                          <i class="num">${obj.buildName}<b> ${obj.formatAvgPrice}万</b> ${obj.formatSaleCount}</i>
+                          <i class="num">${obj.buildName}<b>${obj.formatSaleCount}</i>
                           <i class="num triangle"></i>
                         </p>
                     </div>`;

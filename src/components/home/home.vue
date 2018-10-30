@@ -2,7 +2,7 @@
     <div class="home">      
         <div class="swiper">
             <mt-swipe :auto="4000" class="swiperitem">
-            <mt-swipe-item v-for="item in bannerimg">
+            <mt-swipe-item v-for="(item,index) in bannerimg" :key="index">
                 <a :href="item.contentUrl">
                     <img :src="item.picUrl|imgfilter" alt="" srcset="">
                 </a>               
@@ -115,7 +115,7 @@
         </mt-swipe>
         <img class="yinyingfengimg" src="../../imgs/home/yinyingfengge.png" alt="" srcset="">
         <ul id="ul_1">
-          <li class="ul_li_one" v-for="item in bklist" @click="phoneurl(item)">
+          <li class="ul_li_one" v-for="(item,index) in bklist" @click="phoneurl(item)" :key="index">
             <a>
               <div>
               <div>{{item.title}}</div>
@@ -132,36 +132,32 @@
 
          <swiper :auto="0" :options="swiperOptions" ref="mySwiper" class="swiperershoufangtwo">
             <!-- slides -->
-            <swiper-slide class="swiperfangitemtwo"  style="margin-top:0.2rem" v-for="item in remenlist">
+            <swiper-slide class="swiperfangitemtwo"  style="margin-top:0.2rem" v-for="(item,index) in homeall.hotInfoContentVoList" :key="index">
               <a :href="item.phoneContentUrl">
                 <img v-lazy="item.imageUrl" alt="" srcset="">
                 <div class="xiaoquname">{{item.title}}</div>
-                <div class="xiaoqunumtwo" style="margin-top:0.05rem;">{{item.summary}}</div>
-              </a>
-                
+                <div class="xiaoqunumtwo">{{item.summary}}</div>
+              </a>               
             </swiper-slide>
-           
         </swiper>
-
          <div class="pingrongji">上月成交量统计</div>
          <div class="ershoufangimg" @click="cartogrambtn">
              <div id="fangwuleft">
-                 <div>全市{{statistics.month}}月均价</div>
-                 <div>{{statistics.month}}月世华成交量</div>
+                 <div>全市{{homeall.statisticsInfoVo.month}}月均价</div>
+                 <div>{{homeall.statisticsInfoVo.month}}月世华{{sitename}}成交量</div>
              </div>
              <div id="fangwuright">
-                 <div>{{statistics.avgPrice}}<span>元/平</span></div>
-                 <div>{{statistics.suiteCount }}<span>套</span></div>
+                 <div>{{homeall.statisticsInfoVo.avgPrice}}<span>元/平</span></div>
+                 <div>{{homeall.statisticsInfoVo.suiteCount }}<span>套</span></div>
              </div>
          </div>
          <div class="erlisttwo">
             <div>热门小区</div>
             <div @click="hotdistrictbtn">查看更多</div>
         </div>
-
          <swiper :auto="0" :options="swiperOptions" ref="mySwiper" class="swiperershoufangtwo">
             <!-- slides -->
-            <swiper-slide class="swiperfangitemtwo" v-for="item in relist" @click.native="rmxqbtn(item)">
+            <swiper-slide class="swiperfangitemtwo" v-for="(item,index) in homeall.hotBuildingVolist" :key="index" @click.native="rmxqbtn(item)">
                 <img v-lazy="item.housePic" alt="" srcset="">
                 <div class="xiaoquname">{{item.buildName}}</div>
                 <div class="xiaoqunum">在售{{item.saleCount }}套/在租{{item.rentCount}}套</div>
@@ -176,7 +172,7 @@
 
          <swiper :auto="0" :options="swiperOptions" ref="mySwiper" class="swiperershoufangtwo">
             <!-- slides -->
-            <swiper-slide class="swiperfangitemtwo" v-for="item in xplist">
+            <swiper-slide class="swiperfangitemtwo" v-for="(item,index) in homeall.newInfoContentVoList" :key="index">
                 <a :href="item.phoneContentUrl">
                 <img :src="item.imageUrl" alt="" srcset="">
                 <div class="xiaoquname">{{item.title}}</div>
@@ -189,11 +185,11 @@
         <div class="erlisttwo">
             <div>猜你喜欢</div>
             <div>
-                <span v-for="(item,index) in homebtnlist" @click="homebtns(index)" :class="{homebtn:index==indextwo}">{{item}}</span>
+                <span v-for="(item,index) in homebtnlist" :key="index" @click="homebtns(index)" :class="{homebtn:index==indextwo}">{{item}}</span>
             </div>
         </div>
         <div class="cnxhlist">
-            <div class="cnxhlistitem" v-for="item in esflist" @click="listitembtn(item)">
+            <div class="cnxhlistitem" v-for="(item,index) in esflist" :key="index" @click="listitembtn(item)">
                 <div class="cnxhcontnet">
                     <div class="cnxhcontnetleft">
                         <img :src="item.housePic" alt="">
@@ -209,7 +205,7 @@
                             {{item.houseType}} {{item.builtArea}}m² 
                         </div>
                         <div class="cnxhconterfour">
-                            <div v-for="item in item.houseTag">{{item}}</div>
+                            <div v-for="(item,index) in item.houseTag" :key="index">{{item}}</div>
                         </div>
                          <div class="cnxhconterfive">
                             <div v-if="id=='1'">{{item.saleTotal}}万</div>
@@ -226,6 +222,7 @@
 </template>
 <script>
 import { MessageBox } from "mint-ui";
+import { locationmap } from "../../common/js/locationmap.js";
 export default {
   data() {
     return {
@@ -235,19 +232,16 @@ export default {
       sitename: "",
       indextwo: 0,
       bannerimg: "", //首页banner
-      statistics: "", //统计
       esflist: "", //首页二手房列表
+      homeall:"",//热门咨询。房源统计。热门小区。新房推荐
       gofanglist: "", //首页购房列表
-      relist: "", //热门小区列表
-      remenlist: "", //热门推荐
-      xplist: "", //新盘推荐
       bklist: "", //四个板块接口
       homemove: 10,
       zuobiao: [], //坐标
       swiperOption: {
         autoplay: true,
         slidesPerView: 1.43,
-        spaceBetween: 10,
+        spaceBetween: 10
       },
       swiperOptions: {
         slidesPerView: 2.17
@@ -256,24 +250,38 @@ export default {
     };
   },
   created() {
-    if (window.sessionStorage.htmlurl) {
-      this.htmlurl = JSON.parse(window.sessionStorage.htmlurl);
-    } else {
-      this._querysurl();
-    }
-    if (window.localStorage.sitename) {
+    this._wxfx(); //微信分享
+    locationmap(this).then(() => {
       this.site = window.localStorage.site;
       this.sitename = window.localStorage.sitename;
-      this._request();
-      this._ersf();
-    }
-    
+      if (window.sessionStorage.htmlurl) {
+        this.htmlurl = JSON.parse(window.sessionStorage.htmlurl);
+      } else {
+        this._querysurl();
+      }
+      if (window.localStorage.sitename) {
+        this.site = window.localStorage.site;
+        this.sitename = window.localStorage.sitename;
+        this._request();
+        this._ersf();
+      }
+    });
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
-    this.map();
   },
   methods: {
+    _wxfx() {
+      var wxfx = {
+        url: window.location.href,
+        imgurl:
+          "https://dichan-test.oss-cn-shenzhen.aliyuncs.com/dichan_cust/logo/denglogo.png",
+        title: "邀请您体验世华易居APP",
+        content:
+          "世华易居app是一款非常受欢迎的综合房产服务软件。世华易居app的主要服务是为有需要的用户提供房产租赁、购买等服务。新房和二手房世华易居app全都有，而且服务十分贴心，价格也很优惠！"
+      };
+      this.$wxfx(wxfx);
+    },
     fitmentfinishbtn() {
       this.$router.push("/fitmentfinish");
     },
@@ -289,8 +297,8 @@ export default {
     overseaspurchabtn() {
       this.$router.push("/overseaspurcha");
     },
-    makeplanbtn(){
-      this.$router.push("/makeplaninquire")
+    makeplanbtn() {
+      this.$router.push("/makeplaninquire");
     },
     sojourntnvestbtn() {
       this.$router.push("/sojourntnvest");
@@ -301,51 +309,51 @@ export default {
         .then(res => {
           this.htmlurl = res.data.data;
           window.sessionStorage.htmlurl = JSON.stringify(res.data.data);
-          console.log(this.htmlurl)
         });
     },
-    map() {
-      if (window.localStorage.sitename == undefined) {
-        //浏览器定位
-        var map = new BMap.Map("allmap");
-        var point = new BMap.Point(116.331398, 39.897445);
-        var geolocation = new BMap.Geolocation();
-        geolocation.getCurrentPosition(r => {
-          //获取坐标
-          if (geolocation.getStatus() == BMAP_STATUS_SUCCESS) {
-            var mk = new BMap.Marker(r.point);
-            window.localStorage.mapxy = JSON.stringify({
-              lng: r.point.lng,
-              lat: r.point.lat
-            });
-            window.localStorage.mapmine = JSON.stringify({
-              lng: r.point.lng,
-              lat: r.point.lat
-            });
+    // map() {
+    //   if (window.localStorage.sitename == undefined) {
+    //     //浏览器定位
+    //     var map = new BMap.Map("allmap");
+    //     var point = new BMap.Point(116.331398, 39.897445);
+    //     var geolocation = new BMap.Geolocation();
+    //     geolocation.getCurrentPosition(r => {
+    //       //获取坐标
+    //       if (geolocation.getStatus() == BMAP_STATUS_SUCCESS) {
+    //         var mk = new BMap.Marker(r.point);
+    //         window.localStorage.mapxy = JSON.stringify({
+    //           lng: r.point.lng,
+    //           lat: r.point.lat
+    //         });
+    //         window.localStorage.mapmine = JSON.stringify({
+    //           lng: r.point.lng,
+    //           lat: r.point.lat
+    //         });
 
-            var myFun = result => {
-              var cityName = result.name; //城市名称
-              if (cityName.substr(cityName.length - 1, 1) == "市") {
-                cityName = cityName.substring(0, cityName.length - 1);
-              }
-              var site = pinyinUtil.getPinyin(cityName).replace(/\s/g, ""); //汉字转拼音
-              this.sitename = cityName;
-              this.site = site;
-              window.localStorage.setItem("sitename", cityName);
-              window.localStorage.setItem("site", site);
-              this._request();
-              this._ersf();
-            };
-            var myCity = new BMap.LocalCity();
-            myCity.get(myFun); 
-          } else {
-            this._querysmap();
-          }
-        });
-      }
-    },
-    phoneurl(item){
-      window.location.href = item.phoneContUrl+"&cityName="+this.site+"&id=1&type=web"
+    //         var myFun = result => {
+    //           var cityName = result.name; //城市名称
+    //           if (cityName.substr(cityName.length - 1, 1) == "市") {
+    //             cityName = cityName.substring(0, cityName.length - 1);
+    //           }
+    //           var site = pinyinUtil.getPinyin(cityName).replace(/\s/g, ""); //汉字转拼音
+    //           this.sitename = cityName;
+    //           this.site = site;
+    //           window.localStorage.setItem("sitename", cityName);
+    //           window.localStorage.setItem("site", site);
+    //           this._request();
+    //           this._ersf();
+    //         };
+    //         var myCity = new BMap.LocalCity();
+    //         myCity.get(myFun);
+    //       } else {
+    //         this._querysmap();
+    //       }
+    //     });
+    //   }
+    // },
+    phoneurl(item) {
+      window.location.href =
+        item.phoneContUrl + "&cityName=" + this.site + "&id=1&type=web";
     },
     mapboxtwobtn() {
       this.$router.push("/mapboxtwo");
@@ -357,26 +365,32 @@ export default {
     brokerbtn() {
       this.$router.push("/broker");
     },
-    _querysmap() {
-      this.$http.get(this.$url.URL.DEFAULTCITY).then(res => {
-        var cityName = res.data.data.name; //城市名字
-        if (cityName.substr(cityName.length - 1, 1) == "市") {
-          cityName = cityName.substring(0, cityName.length - 1);
-        }
-        this.sitename = cityName;
-        window.localStorage.setItem("sitename", cityName); //缓存城市名
-        window.localStorage.mapxy = JSON.stringify({
-          //缓存城市坐标
-          lng: res.data.data.px,
-          lat: res.data.data.py
-        });
-        this.site = res.data.data.value;
-        window.localStorage.site = res.data.data.value; //缓存城市拼音
-        this._request();
-        this._ersf();
-      });
-    },
+    // _querysmap() {
+    //   this.$http.get(this.$url.URL.DEFAULTCITY).then(res => {
+    //     var cityName = res.data.data.name; //城市名字
+    //     if (cityName.substr(cityName.length - 1, 1) == "市") {
+    //       cityName = cityName.substring(0, cityName.length - 1);
+    //     }
+    //     this.sitename = cityName;
+    //     window.localStorage.setItem("sitename", cityName); //缓存城市名
+    //     window.localStorage.mapxy = JSON.stringify({
+    //       //缓存城市坐标
+    //       lng: res.data.data.px,
+    //       lat: res.data.data.py
+    //     });
+    //     this.site = res.data.data.value;
+    //     window.localStorage.site = res.data.data.value; //缓存城市拼音
+    //     this._request();
+    //     this._ersf();
+    //   });
+    // },
     _request() {
+      //热门咨询。房源统计。热门小区。新房推荐
+      this.$http.post(this.$url.URL.HOMEDATA+"?pageNo=1&pageSize=10")
+      .then(res=>{
+        this.homeall=res.data.data
+        console.log(this.homeall)
+      })
       //请求数据接口
       //首页banner请求
       let bannerurl =
@@ -394,33 +408,6 @@ export default {
             this.bklist = res.data.data;
           }
         });
-      //热门推荐
-      this.$http
-        .get(this.$url.URL.INFOQUERYERMENTUIJIAN + "/1001", {
-          pageNo: 1,
-          pageSize: 5
-        })
-        .then(res => {
-          this.remenlist = res.data.data;
-        });
-      //新盘推荐
-      this.$http
-        .get(this.$url.URL.INFOQUERYERMENTUIJIAN + "/1002", {
-          pageNo: 1,
-          pageSize: 5
-        })
-        .then(res => {
-          this.xplist = res.data.data;
-        });
-      //首页统计
-      let hosuser = this.$url.URL.HOSEUSED + "/" + this.site;
-      this.$http.get(hosuser).then(res => {
-        this.statistics = res.data.data;
-      });
-      //热门小区列表
-      this.$http.get(this.$url.URL.HOTBUILDING + "/" + this.site).then(res => {
-        this.relist = res.data.data;
-      });
       //首页的购房指南
       var gofangurl =
         this.$url.URL.INFORMATION +
@@ -458,7 +445,7 @@ export default {
       });
     },
     sellrentfourbtn() {
-      if (window.localStorage.token) {
+      if (window.localStorage.dc_token) {
         this.$router.push("/sellrent/3");
       } else {
         this.$router.push("/register");
@@ -487,15 +474,15 @@ export default {
       this.$router.push("/newhouse");
     },
     rentingbtnthree() {
-      if (window.localStorage.token) {
-        this.$router.push({path:"/sellrent/1"});
+      if (window.localStorage.dc_token) {
+        this.$router.push({ path: "/sellrent/1" });
       } else {
         this.$router.push("/register");
       }
     },
     rentingbtnfour() {
-      if (window.localStorage.token) {
-        this.$router.push({path:"/sellrent/2"});
+      if (window.localStorage.dc_token) {
+        this.$router.push({ path: "/sellrent/2" });
       } else {
         this.$router.push("/register");
       }
@@ -674,7 +661,7 @@ export default {
 }
 #ul_1 {
   width: 100%;
-  margin-top: 0.15rem;
+  margin-top: 0.2rem;
   overflow: hidden;
   padding: 0 0.12rem;
 }
@@ -755,7 +742,7 @@ export default {
 .btnbox > li > img {
   width: 0.43rem;
   height: 0.43rem;
-  margin-bottom: 0.05rem;
+  margin-bottom: 0.1rem;
 }
 .btnbox > li {
   width: 20%;
@@ -818,7 +805,7 @@ export default {
   line-height: 0.2rem;
   color: @color_1;
   box-sizing: border-box;
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
 }
 .erlist > div:nth-of-type(2) {
   float: right;
@@ -930,7 +917,7 @@ export default {
   float: left;
   font-size: @fontsize_4;
   color: @color_1;
-  margin-top: 0.1rem;
+  margin-top: 0.15rem;
   overflow: hidden; /*超出部分隐藏*/
   white-space: nowrap; /*不换行*/
   text-overflow: ellipsis; /*超出部分文字以...显示*/
@@ -950,14 +937,14 @@ export default {
   float: left;
   font-size: @fontsize_5;
   color: @color_2;
-  margin-top: 0.03rem;
+  margin-top: 0.08rem;
 }
 .xiaoqunumtwo {
   width: 100%;
   float: left;
   font-size: @fontsize_5;
   color: @color_2;
-  margin-top: 0.05rem;
+  margin-top: 0.1rem;
   overflow: hidden; /*超出部分隐藏*/
   white-space: nowrap; /*不换行*/
   text-overflow: ellipsis; /*超出部分文字以...显示*/
@@ -967,7 +954,7 @@ export default {
   float: left;
   font-size: 0.19rem;
   color: #ff4343;
-  margin-top: 0.03rem;
+  margin-top: 0.08rem;
 }
 .xiaoqumoney > span {
   font-size: 0.11rem;
@@ -977,9 +964,19 @@ export default {
 }
 </style>
 <style>
-/* .mint-swipe-indicator.is-active {
-   background: #FF4343 !important;
-   opacity: 1 !important;
-} */
+.swiper .is-active{
+  background:rgba(255, 0, 0, 1);
+  opacity: 1;
+}
+.swiper .mint-swipe-indicators{
+  bottom:0.9rem;
+}
+.swiperonebox .mint-swipe-indicators .is-active{
+  background:rgba(255, 0, 0, 1);
+  opacity: 1;
+}
+.swiperonebox .mint-swipe-indicators{
+  bottom:1rem;
+}
 </style>
 

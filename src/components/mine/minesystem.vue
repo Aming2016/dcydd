@@ -52,24 +52,28 @@ export default {
       this.$router.push("/minepassword");
     },
     gohuanhaombtntwo() {
-      MessageBox.confirm("是否退出登录?").then(action => {
-        this._querystwo();
-      })
-      .catch(res=>{
-
-      })
+      MessageBox.confirm("是否退出登录?")
+        .then(action => {
+          this._querystwo();
+        })
+        .catch(res => {});
     },
 
     _querystwo() {
       this.$http.post(this.$url.URL.MINELOGOUT).then(res => {
-        localStorage.removeItem("token");
-        this.$store.state.messagebol=0;
+        var objct = {
+          data: {},
+          type: "LOGOUT"
+        };
+        this.$addevent(objct);
+        localStorage.removeItem("dc_token");
+        this.$store.state.messagebol = 0;
         localStorage.removeItem("sitename");
-        localStorage.removeItem("mydata");
+        localStorage.removeItem("dc_mydata");
         sessionStorage.clear();
         localStorage.removeItem("my_wx_data");
+        this.$imConn.close();
         this.$router.push("/");
-        JIM.loginOut();
       });
     }
   },

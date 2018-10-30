@@ -3,19 +3,18 @@
    <headertwo :dataname="dataname">
    </headertwo>
    <div class="boxcontent">
-     <div v-for="item in messagelist.msgs" class="contenbox">
+     <div class="contenbox" v-for="item in messagelist.content">
        <div>
-         <span>{{item.ctime_ms|timefilter}}</span>
+         <span>{{item.time|timefilter}}</span>
       </div>
-       <div :class="{li_1:item.content.from_id!==mydataname,li_2:item.content.from_id==mydataname}">
-        <img v-if="item.content.from_id!==mydataname" :src="messagelist.from_username|jjrheadimg" alt="">
-        <img v-else :src="myimg" alt="">
+       <div :class="{li_1:item.from!=mydataname,li_2:item.from==mydataname}">
+        <img v-if="item.from==mydataname" :src="myimg" alt="">
+        <img v-else :src="toname.chatUsername|jjrheadimg" :onerror="null|headimgfrilter" alt="">
         <div>
-          <img v-if="item.content.msg_type=='image'"  :src="item.content.msg_body.media_id" alt="">
+          <img v-if="item.url" :src="item.url" alt="">
           <span v-else>
-            {{item.content.msg_body.text}}
-          </span>
-          
+           {{item.data}}
+          </span>         
         </div>
       </div>
      </div>
@@ -25,7 +24,7 @@
    </div>
    <div id="keyboard">
        <input v-iosinput type="text" v-model="testcontent" @focus='test' class="inputtext">
-       <input class="inputtexttwo"  v-if="!testcontent" type="file" accept="image/*" @change="changeimg($event)">
+       <input id="inputtexttwo"  v-if="!testcontent" type="file" accept="image/*" @change="changeimg($event)">
        <img v-if="!testcontent" src="../../imgs/home/liaotianjiaohao.png" alt="">
        <div v-else @click="btn">发送</div>
    </div>
@@ -33,7 +32,7 @@
 </template>
 
 <script>
-import { Toast, Indicator } from "mint-ui"; 
+import { Toast, Indicator } from "mint-ui";
 import headertwo from "../module/headertwo";
 export default {
   name: "HelloWorld",
@@ -42,42 +41,44 @@ export default {
       dataname: "在线咨询",
       datamine: "", //聊天对象
       numbol: true,
-      fd: "", //
+      fd: "",
+      toname: "", //发送的聊天对象
       testcontent: "", //输入的聊天内容
-      mydataname: JSON.parse(window.localStorage.mydata).easemobUsername,
-      myimg: JSON.parse(window.localStorage.mydata).headImage, //我的头像
-      mydata: JSON.parse(window.localStorage.mydata)
+      mydataname: JSON.parse(window.localStorage.dc_mydata).easemobUsername,
+      myimg: JSON.parse(window.localStorage.dc_mydata).headImage, //我的头像
+      mydata: JSON.parse(window.localStorage.dc_mydata)
     };
   },
   created() {
     //获取聊天对象
-    this.datamine = this.$store.state.message;
-    this.onMsgReceives();
+    this.toname = this.$store.state.chatobject;
+    this.dataname = this.toname.emplName;
+    console.log(this.mydata);
+    // this.monitor();
+    var objct = {
+      data: {},
+      type: "CHAT"
+    };
+    this.$addevent(objct);
   },
   computed: {
     messagelist() {
-      //监听聊天消息变化
-      let arr = this.$store.state.messagelist.filter(item => {
-        return item.from_username == this.datamine.username; //假设id为唯一标识
+      var listfind = this.$store.state.friendlist.find((value, index) => {
+        return value.chatUsername == this.$store.state.chatobject.chatUsername;
       });
-      if (arr.length == 0) {
-        var set = {};
-        set.msgs = [];
-        return set;
-      } else {
-        for (let i = 0; i < this.$store.state.messagelist.length; i++) {
-          if (
-            this.$store.state.messagelist[i].from_username ==
-            this.datamine.username
-          ) {
-            return this.$store.state.messagelist[i];
-          }
-        }
-      }
+      listfind.quantity = 0;
+      //push到缓存里面
+      var lockey = JSON.parse(window.localStorage.dc_mydata).easemobUsername;
+      var messagelist = JSON.parse(localStorage.getItem(lockey));
+      var listtwofind = messagelist.find((value, index) => {
+        return value.chatUsername == this.$store.state.chatobject.chatUsername;
+      });
+      listtwofind.quantity = 0;
+      localStorage.setItem(lockey, JSON.stringify(messagelist));
       setTimeout(() => {
-        var boxcontent = document.querySelector(".scoll");
-        boxcontent.scrollIntoView(false);
-      }, 100);
+        this.scrollball();
+      }, 400);
+      return listfind || this.scrollball();
     }
   },
   methods: {
@@ -87,209 +88,43 @@ export default {
     //   });
     //   this.getConversation();
     // },
-    onMsgReceiveimg(data) {
-      //发送图片消息处理
-      var set = {
-				username: this.datamine.username,
-				unread_msg_count: 1,
-				nickName: this.datamine.nickName,
-				name: this.datamine.username,
-      }
-      console.log(set)
-      this.$store.dispatch("onepushmessagelist",set)
-      let arr = this.$store.state.messagelist.filter(item => {
-        return item.from_username == this.datamine.username; //假设id为唯一标识
-      });
-      if (arr.length == 0) {
-        var messgone = {};
-        messgone.ctime_ms = new Date().getTime();
-        messgone.content = {
-          from_id: this.mydataname,
-          msg_body: {
-            media_id: data.url
-          },
-          url: true,
-          msg_type: "image"
-        };
-        var message = {};
-        message.from_username = this.datamine.username;
-        message.msgs = [];
-        message.msgs.push(messgone);
-        this.$store.dispatch("messagebtnone", message);
-      } else {
-        var message = {};
-        message.name = this.datamine.username;
-        message.ctime_ms = new Date().getTime();
-        message.content = {
-          from_id: this.mydataname,
-          msg_body: {
-            media_id: data.url
-          },
-          url: true,
-          msg_type: "image"
-        };
-        this.$store.dispatch("messagebtntwo", message);
-      }
-      Indicator.close();
-      this.scrollball(); //滚动到底不
-    },
-    getConversation() {
-      //获取会话列表
-      JIM.getConversation().onSuccess(data => {
-        this.$store.dispatch("getConversation", data.conversations);
-      });
-    },
-    onMsgReceive() {
-      //发送文字消息处理
-      console.log(this.datamine)
-      var set = {
-				username: this.datamine.username,
-				unread_msg_count: 1,
-				nickName: this.datamine.nickName,
-				name: this.datamine.username,
-      }
-      console.log(set)
-      this.$store.dispatch("onepushmessagelist",set)
-      let arr = this.$store.state.messagelist.filter(item => {
-        return item.from_username == this.datamine.username; //假设id为唯一标识
-      });
-      if (arr.length == 0) {
-        var messgone = {};
-        messgone.ctime_ms = new Date().getTime();
-        messgone.content = {
-          from_id: this.mydataname,
-          msg_body: {
-            text: this.testcontent
-          },
-          msg_type: "text"
-        };
-        var message = {};
-        message.from_username = this.datamine.username;
-        message.msgs = [];
-        message.msgs.push(messgone);
-        this.$store.dispatch("messagebtnone", message);
-      } else {
-        var message = {};
-        message.name = this.datamine.username;
-        message.ctime_ms = new Date().getTime();
-        message.content = {
-          from_id: this.mydataname,
-          msg_body: {
-            text: this.testcontent
-          },
-          msg_type: "text"
-        };
-        this.$store.dispatch("messagebtntwo", message);
-      }
-      this.testcontent = "";
-    },
-    onMsgReceives() {
-      //监听收到消息后处理
-      JIM.onMsgReceive(data => {
-        // this.getConversation(); //获取会话列表用于刷新会话列表未读数
-        this.$store.dispatch("messagepush", data.messages[0].content);
-        this.getUnreadMsgCnt(data.messages[0].from_username);//告诉后台获取会话未读数
-        let arr = this.$store.state.messagelist.filter(item => {
-          return item.from_username == data.messages[0].from_username; //假设id为唯一标识
-        });
-        if (arr.length == 0) {
-          var messgone = {};
-          if (data.messages[0].content.msg_type == "image") {
-            var urls = "";
-            JIM.getResource({
-              media_id: data.messages[0].content.msg_body.media_id
-            }).onSuccess(data => {
-              urls = data.url;
-              (messgone.ctime_ms = data.messages[0].ctime_ms),
-                (messgone.content = {
-                  from_id: data.messages[0].from_username,
-                  url: true,
-                  msg_body: {
-                    media_id: urls
-                  },
-                  msg_type: "image"
-                });
-              var message = {};
-              message.from_username = data.messages[0].from_username;
-              message.msgs = [];
-              message.msgs.push(messgone);
-              this.$store.dispatch("messagebtnone", message);
-            });
-          } else {
-            (messgone.ctime_ms = data.messages[0].ctime_ms),
-              (messgone.content = {
-                from_id: data.messages[0].from_username,
-                msg_body: {
-                  text: data.messages[0].content.msg_body.text
-                },
-                msg_type: "text"
-              });
-            var message = {};
-            message.from_username = data.messages[0].from_username;
-            message.msgs = [];
-            message.msgs.push(messgone);
-            this.$store.dispatch("messagebtnone", message);
-          }
-        } else {
-          this.$store.dispatch("messagebtn", data);
-        }
-        this.scrollball();
-      });
-    },
+
     btn() {
       //发送按钮
       if (this.testcontent) {
-        if (this.messagelist.msgs == undefined) {
-          this.messagelist.msgs = [];
-        }
         var inputbutton = document.querySelector("input");
         inputbutton.focus();
         this.contentgo();
       }
-      this.scrollball();
     },
     test() {
       this.scrollball();
       //获取input焦点事件
     },
+
+    //发送文本消息
     contentgo() {
+      var id = this.$imConn.getUniqueId(); // 生成本地消息id
+      var msg = new WebIM.message("txt", id); // 创建文本消息
+      msg.set({
+        msg: this.testcontent, // 消息内容
+        to: this.$store.state.chatobject.chatUsername, // 接收消息对象（用户id）
+        roomType: false,
+        ext: { nickName: this.mydata.nickname, headImg: this.myimg },
+        success: function(id, serverMsgId) {}
+      });
+      msg.body.chatType = "singleChat";
+      this.$imConn.send(msg.body);
+      var objct = {
+        data: this.testcontent, //聊天信息
+        from: this.mydataname, //发送人的环信标识
+        to: this.$store.state.chatobject.chatUsername, // 接收消息对象（用户id）
+        chatUsername: this.$store.state.chatobject.chatUsername, // 接收消息对象（用户id）
+        type: "chat"
+      };
+      this.$store.dispatch("pushfriendmessage", objct);
+      this.testcontent = "";
       //发送聊天信息
-      JIM.sendSingleMsg({
-        target_username: this.datamine.username,
-        appkey: this.mydata.brokerAppKey,
-        content: this.testcontent,
-        no_offline: false,
-        no_notification: false,
-        need_receipt: true
-      })
-        .onSuccess((data, msg) => {
-          this.scrollball();
-          this.onMsgReceive(); //发送消息
-        })
-        .onFail(data => {
-          //同发送单聊文本
-          if (data.code == 880103) {
-            this._querysmessage();
-          }
-        });
-    },
-    _querysmessage() {
-      this.$http
-        .post(this.$url.URL.JIGUANGBROKERREGUSER, {
-          chatUsername: this.datamine.username
-        })
-        .then(res => {
-          this.btn(); //重新发送文字
-        });
-    },
-    _querysmessageimg() {
-      this.$http
-        .post(this.$url.URL.JIGUANGBROKERREGUSER, {
-          chatUsername: this.datamine.username
-        })
-        .then(res => {
-          this.sendSinglePic(this.fd); //发送图片
-        });
     },
     scrollball() {
       //内容滚动到最底部
@@ -298,76 +133,81 @@ export default {
         boxcontent.scrollIntoView(false);
       }, 100);
     },
+
+    //发送图片
     changeimg(e) {
-      this.fd = new FormData();
-      let files = e.target.files || e.dataTransfer.files;
-      if (!files[0]) throw new Error("获取文件失败");
-      this.fd.append(files[0].name, files[0]);
-      this.sendSinglePic(this.fd); //发送图片
+      //将图片转换bs64；
+      var files = e.target.files[0];
+      if (!e || !window.FileReader) return; // 看支持不支持FileReader
+      let reader = new FileReader();
+      let imgurl; //bs64图片路径
+      reader.readAsDataURL(files); // 这里是最关键的一步，转换就在这里
+      reader.onloadend = () => {
+        var objct = {
+          url: reader.result, //聊天信息
+          from: this.mydataname, //发送人的环信标识
+          ext: { nickName: this.mydata.nickname, headImg: this.myimg },
+          to: this.$store.state.chatobject.chatUsername, // 接收消息对象（用户id）
+          chatUsername: this.$store.state.chatobject.chatUsername, // 接收消息对象（用户id）
+          type: "imgs"
+        };
+        this.$store.dispatch("pushfriendmessage", objct);
+      };
+      //环信发送图片
+      var id = this.$imConn.getUniqueId();
+      var msg = new WebIM.message("img", id);
+      var input = document.getElementById("inputtexttwo"); // 选择图片的input
+      var file = WebIM.utils.getFileUrl(input); // 将图片转化为二进制文件
+      // this.scrollball();
+      var allowType = {
+        jpg: true,
+        gif: true,
+        png: true,
+        bmp: true
+      };
+      var option = {
+        apiUrl: WebIM.config.apiURL,
+        file: file,
+        to: this.$store.state.chatobject.chatUsername,
+        roomType: false,
+        ext: { nickName: this.mydata.nickname, headImg: this.myimg },
+        chatType: "singleChat",
+        onFileUploadError: function() {},
+        onFileUploadComplete: function() {},
+        success: function() {}
+      };
+      // for ie8
+      try {
+        if (!file.filetype.toLowerCase() in allowType) {
+          return;
+        }
+      } catch (e) {
+        option.flashUpload = WebIM.flashUpload;
+      }
+      msg.set(option);
+      this.$imConn.send(msg.body);
     },
-    sendSinglePic(fd) {
-      Indicator.open({
-        text: "图片发送中...",
-        spinnerType: "fading-circle"
-      });
-      //发送图片
-      JIM.sendSinglePic({
-        target_username: this.datamine.username,
-        image: fd,
-        appkey: this.mydata.brokerAppKey,
-        need_receipt: true
-      })
-        .onSuccess((data, msg) => {
-          //data.code 返回码
-          //data.message 描述
-          //data.msg_id 发送成功后的消息id
-          //data.ctime_ms 消息生成时间,毫秒
-          //data.appkey 用户所属 appkey
-          //data.target_username 用户名
-          //msg.content 发送成功消息体
-          // console.log(msg);
-          this.getResource(msg);
-        })
-        .onFail(data => {
-          //同发送单聊文本
-          if (data.code == 880103) {
-            this._querysmessageimg();
-          }
-        });
-    },
-    getResource(msg) {
-      //获取资源
-      JIM.getResource({
-        media_id: msg.content.msg_body.media_id
-      }).onSuccess(data => {
-        //data.code 返回码
-        //data.message 描述
-        //data.url 资源临时访问路径
-        this.onMsgReceiveimg(data);
-      });
-    },
-    getUnreadMsgCnt(name) {
-      var count = JIM.getUnreadMsgCnt({
-        username: name
+    monitor() {
+      this.$imConn.listen({
+        onClosed(message) {}, //连接关闭回调
+        onTextMessage(message) {
+          console.log(message);
+          this.$store.dispatch("pushfriendmessage", message);
+          this.scrollball();
+        }, //收到文本消息
+        onEmojiMessage(message) {}, //收到表情消息
+        onPictureMessage(message) {
+          console.log(message);
+          this.$store.dispatch("pushfriendmessage", message);
+          this.scrollball();
+        } //收到图片消息
       });
     }
   },
   mounted() {
     this.scrollball(); //滚动到底不
   },
-  beforeDestroy() {
-    //组件销毁之前调用\
-    //重置会话对象
-    JIM.resetUnreadCount({
-      username: this.datamine.username,
-      appkey: this.mydata.brokerAppKey
-    });
-    this.$store.dispatch("movemessageitem", this.datamine.username);
-    // //获取会话列表
-    // JIM.getConversation().onSuccess(data => {
-    //   this.$store.dispatch("getConversation", data.conversations);
-    // });
-  },
+  beforeDestroy() {},
   components: {
     headertwo
   }
@@ -483,7 +323,7 @@ export default {
   font-size: 0.14rem;
   text-indent: 0.12rem;
 }
-.inputtexttwo {
+#inputtexttwo {
   width: 0.35rem;
   height: 0.3rem;
   margin-left: 0.15rem;

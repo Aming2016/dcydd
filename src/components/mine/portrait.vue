@@ -24,7 +24,7 @@ export default {
     return {
       dataname: "头像",
       titleimg:"",
-      mydata:JSON.parse(window.localStorage.mydata),
+      mydata:JSON.parse(window.localStorage.dc_mydata),
       imgnuber:true,
     };
   },
@@ -54,7 +54,7 @@ export default {
                         if(res.data.status=='1'){
                                 that.$http.get(that.$url.URL.MINEDATAINFO)
                                 .then(res=>{
-                                    window.localStorage.mydata=JSON.stringify(res.data.data)
+                                    window.localStorage.dc_mydata=JSON.stringify(res.data.data)
                                     that.$router.back(-1)
                                 })
                         }

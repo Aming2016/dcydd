@@ -7,7 +7,7 @@
         
         <swiper :auto="0" ref="mySwiper"  :options="swiperOptions" class="swiperershoufangtwo">
             <!-- slides -->
-            <swiper-slide class="swiperfangitemtwo"  style="margin-top:0.2rem" v-for="item in list">
+            <swiper-slide class="swiperfangitemtwo"  style="margin-top:0.2rem" v-for="(item,index) in list" :key="index">
               <p class="p_1">{{item.houseTitle}}</p>
               <p class="p_2"><span>{{item.areaName}}</span><span>{{item.districtName}}</span><span>{{item.houseDirection}}</span></p>
               <p class="p_2"><span>{{item.houseType}}</span><span>{{item.builtArea}}㎡</span></p>
@@ -17,7 +17,7 @@
         </swiper>
         <div class="div_3"></div>
         <ul class="ul_1">
-            <li v-for="item in listitem">
+            <li v-for="(item,index) in listitem" :key="index">
                 <img src="../../imgs/home/kaobeidiansf.png" alt="">
                 <div>
                     <p>{{item.nodeContent}}</p>

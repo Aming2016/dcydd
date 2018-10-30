@@ -85,10 +85,12 @@ export default {
       }
     },
     rentingitembtn(item) {
+      window.localStorage.scity=window.localStorage.site;
+      window.localStorage.site = item.scity;
       if (item.status == "0") {
         this.$router.push({
           path: "/rentingitem/" + item.sdid,
-          query: { id: this.id }
+          query: { id: this.id}
         });
       }
     },

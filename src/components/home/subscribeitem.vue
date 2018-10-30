@@ -42,14 +42,14 @@ export default {
       dataone: "",
       dataname: "预约时间",
       buttonname: "提交",
-      mydata:JSON.parse(window.localStorage.mydata),
+      mydata:JSON.parse(window.localStorage.dc_mydata),
       brokername:"",//选择的经纪人
       dateitem:[],//时间戳
       dateitemtwo:[],//传递后台的时间2018-12-25
       datetiem:[],//转化的时间
       dateteimitems:"",//滑动选取的时间
       dateteimitemone:"",//往后台传递的时间
-      phonename:JSON.parse(window.localStorage.mydata).mobile.replace(/(\d{3})(\d{4})(\d{4})/,"$1****$3"),//手机号码
+      phonename:JSON.parse(window.localStorage.dc_mydata).mobile.replace(/(\d{3})(\d{4})(\d{4})/,"$1****$3"),//手机号码
       myname:"",//我的姓名
       slots: [
         {
@@ -91,7 +91,6 @@ export default {
     this.$store.brokername
       ? (this.brokername = this.$store.brokername)
       : (this.brokername = { emplName: "", id: "" });
-    console.log(this.$store.brokername);
   },
   methods: {
     jingjilistbtn(){
@@ -130,7 +129,6 @@ export default {
             houseList:this.$store.awaitlist
         })
         .then(res=>{
-            console.log(res)
             if(res.data.status=='1'){
               MessageBox.alert("预约成功", "提示")
               this.$router.push("/lookhouseone")
@@ -186,13 +184,10 @@ export default {
     pickerbtntwo(){
       //picker确定按钮
       this.pickermover = false;
-      console.log("aaaaa")
       this.dateteimitemone=this.dateteimitems
-      console.log(this.dateteimitemone)
     },
     onValuesChange(picker,values){
       this.dateteimitems=values     
-      // console.log(this.dateteimitemone)
     },
     pickerbtn() {
       this.pickermover = true;

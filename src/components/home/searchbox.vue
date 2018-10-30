@@ -48,7 +48,7 @@ export default {
     }
   },
   created(){
-   if(window.localStorage.token){
+   if(window.localStorage.dc_token){
        this._querys()
    }
   },

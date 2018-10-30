@@ -23,16 +23,16 @@
             </li>
         </ul>
         <ul class="messageul" style="margin-top:0;border:none;margin-bottom:0.5rem;">
-            <li @click="messagethree(item)" v-for="(item,index) in listdata" style="border-bottom:0.005rem solid #e6e6e6;" @touchstart="btnleft(item,index,$event)" @touchend="diversionbtn(item,index,$event)">
-                <div class="messagelist messagelistddd" :class="{class_1:moveleft==index}">
-                    <div v-show="item.unread_msg_count!==0">{{item.unread_msg_count}}</div>
-                    <img :src="item.name|jjrheadimg" alt="">
+            <li @click="messagethree(item)" v-show="item.content.length!=0" v-for="item in listdata" style="border-bottom:0.005rem solid #e6e6e6;" @touchstart="btnleft()" @touchend="diversionbtn()">
+                <div class="messagelist messagelistddd" :class="{class_1:false}">
+                    <div v-show="item.quantity!=0">{{item.quantity}}</div>
+                    <img :src="item.photo|headimgfriltertwo" :onerror="null|headimgfrilter" alt="">
                     <div class="messagelistright">
-                        <div>{{item.nickName}}</div>
-                        <div>{{item.content}}</div>
+                        <div>{{item.emplName}}</div>
+                        <div>{{item.content.length!=0?item.content[item.content.length-1].data?item.content[item.content.length-1].data:'[图片]':""}}</div>
                     </div>
                 </div>
-                <div class="removebtn" :class="{class_2:moveleft==index}" @click.stop="removebtn(item,index)">标记已读</div>               
+                <div class="removebtn" :class="{class_2:false}" @click.stop="removebtn()">标记已读</div>               
             </li>
         </ul>
     </div>
@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       // listdata: [],
-      moveleft: null //滑动距离
+      moveleft: null, //滑动距离
     };
   },
   created() {
@@ -51,29 +51,6 @@ export default {
   },
   computed: {
     listdata() {
-      for (let i = 0; i < this.$store.state.messagelist.length; i++) {
-        for (let l = 0; l < this.$store.state.friendlist.length; l++) {
-          if (
-            this.$store.state.messagelist[i].from_username ==
-            this.$store.state.friendlist[l].username
-          ) {
-            if (
-              this.$store.state.messagelist[i].msgs[
-                this.$store.state.messagelist[i].msgs.length - 1
-              ].content.msg_type == "text"
-            ) {
-              this.$store.state.friendlist[
-                l
-              ].content = this.$store.state.messagelist[i].msgs[
-                this.$store.state.messagelist[i].msgs.length - 1
-              ].content.msg_body.text;
-            } else {
-              this.$store.state.friendlist[l].content = "[图片]";
-            }
-          }
-        }
-      }
-      console.log(this.$store.state.friendlist)
       return this.$store.state.friendlist;
     }
   },
@@ -84,29 +61,29 @@ export default {
     messagetwo() {
       this.$router.push({ path: "/messageitem/", query: { id: "2" } });
     },
-    removebtn(item, index) {
+    removebtn() {
       // //点击删除
     },
     messagethree(item) {
       //点击聊天
       this.moveleft = null;
-      this.$store.dispatch("message", item);
+      this.$store.dispatch("pushfriendlisttwo",item);
       this.$router.push("/abmessage");
     },
-    btnleft(item, index, event) {
+    btnleft() {
       //触摸
       this.moveone = event.touches[0].clientX;
     },
-    diversionbtn(item, index, event) {
+    diversionbtn() {
       //离开
-      this.movetwo = event.changedTouches[0].clientX;
-      this.movethree = this.moveone - this.movetwo;
-      if (this.movethree > 50) {
-        this.moveleft = index;
-      }
-      if (this.movethree < -50) {
-        this.moveleft = null;
-      }
+      // this.movetwo = event.changedTouches[0].clientX;
+      // this.movethree = this.moveone - this.movetwo;
+      // if (this.movethree > 50) {
+      //   this.moveleft = index;
+      // }
+      // if (this.movethree < -50) {
+      //   this.moveleft = null;
+      // }
     }
   }
 };

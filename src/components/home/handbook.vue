@@ -36,11 +36,13 @@ export default {
 .handbook {
   width: 100%;
   height: 100%;
-  margin-top:0.44rem;
 }
 #box{
+    position:fixed; 
     width:100%;
     min-height:100%;
+    top:0.45rem;
+    overflow-y: scroll;
     border:none;
   }
 </style>

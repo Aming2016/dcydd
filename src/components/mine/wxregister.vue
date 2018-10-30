@@ -81,7 +81,7 @@ export default {
         })
         .then(res => {
           if (res.data.status == "1") {
-            window.localStorage.token = res.data.data;
+            window.localStorage.dc_token = res.data.data;
             MessageBox.alert("登录成功");
             this.$router.push("/mine");
             this._querys();
@@ -113,7 +113,7 @@ export default {
     },
     _querys() {
       this.$http.get(this.$url.URL.MINEDATAINFO).then(res => {
-        window.localStorage.mydata = JSON.stringify(res.data.data);
+        window.localStorage.dc_mydata = JSON.stringify(res.data.data);
         this.mydata = res.data.data;
         if(this.mydata.easemobUsername==null){
           this._bangdingjiguang()
@@ -158,8 +158,8 @@ export default {
     jgdenglu() {
       //登录
       JIM.login({
-        username: JSON.parse(window.localStorage.mydata).easemobUsername,
-        password: JSON.parse(window.localStorage.mydata).easemobPassword
+        username: JSON.parse(window.localStorage.dc_mydata).easemobUsername,
+        password: JSON.parse(window.localStorage.dc_mydata).easemobPassword
       })
         .onSuccess(data => {
           console.log("登录成功");

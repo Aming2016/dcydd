@@ -11,21 +11,21 @@
         </div>
       
         <mt-swipe :auto="4000" class="swiperitem">
-            <mt-swipe-item v-for="item in bannerimg" class="swiperitemitem">
+            <mt-swipe-item v-for="(item,index) in bannerimg" :key="index" class="swiperitemitem">
                 <a :href="item.contentUrl">
                     <img :src="item.picUrl|imgfilter" alt="" srcset="">
                 </a>
             </mt-swipe-item>
         </mt-swipe>
             <ul id="ul_1" :class="{gudingclass:numberfalse}">
-            <li v-for="(item,index) in titlebtn" @click="listbtn(item,index)" :class="{ziticolor:active==index}">{{item.cityName}}</li>
+            <li v-for="(item,index) in titlebtn" :key="index" @click="listbtn(item,index)" :class="{ziticolor:active==index}">{{item.cityName}}</li>
         </ul>
         
     <ul class="cnxhlist" v-infinite-scroll="loadMore"
     infinite-scroll-disabled="loading"
     infinite-scroll-distance="10"
     infinite-scroll-immediate-check="true" :class="{gudingclasstwo:numberfalse}">
-        <li v-for="item in list">
+        <li v-for="(item,index) in list" :key="index">
             <a :href="item.phoneContenUrl">
             <div id="divlistleft">
                 <img v-lazy="item.imageUrl" alt="">
@@ -33,7 +33,7 @@
             <div id="divlistright">
                 <div class="divlist_1">
                     <p>{{item.buildName}}</p>
-                    <p class="biaoqian" v-for="item in item.tag">{{item}}</p>
+                    <p class="biaoqian" v-for="(item,index) in item.tag" :key="index">{{item}}</p>
                 </div>
                 <div>
                     <span>{{item.buildSummary}}</span>
@@ -70,13 +70,14 @@ export default {
     window.addEventListener("scroll", this.handleScroll);
   },
   created() {
+    this.$store.state.activeindex = "6";
     this._querys();
   },
   methods: {
     _querys() {
       //获取城市列表
       this.$http
-        .get(this.$url.URL.NEWBUILDINGINDEX, {
+        .get(this.$url.URL.NEWBUILDINGINDEX,{
           site: this.site
         })
         .then(res => {

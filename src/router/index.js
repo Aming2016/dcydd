@@ -74,6 +74,11 @@ const minseller = resolve => require(['@/components/mine/minseller'], resolve)//
 const minsellerone = resolve => require(['@/components/mine/minsellerone'], resolve)//我的页面的我的申请
 const minsellertwo = resolve => require(['@/components/mine/minsellertwo'], resolve)//我的页面的我的房源
 const takelooklist = resolve => require(['@/components/mine/takelooklist'], resolve)//我的页面的委托详情的带看记录
+const invitation = resolve => require(['@/components/mine/invitation'], resolve)//我的页面的邀请好友页面
+const friendlist = resolve => require(['@/components/mine/friendlist'], resolve)//我的页面的邀请好友列表
+const twocode = resolve => require(['@/components/mine/twocode'], resolve)//我的页面的微信绑定页面
+const cardstock = resolve => require(['@/components/mine/cardstock'], resolve)//我的页的卡卷
+const integral = resolve => require(['@/components/mine/integral'], resolve)//我的页的积分
 
 const minerentinglist = resolve => require(['@/components/mine/minerentinglist'], resolve)//我的页面的我收藏的二手房租房
 const minecomment = resolve => require(['@/components/mine/minecomment'], resolve)//我的页面的我的评论
@@ -84,6 +89,7 @@ const mineselleritem = resolve => require(['@/components/mine/mineselleritem'], 
 const portrait = resolve => require(['@/components/mine/portrait'], resolve)//我的页面的头像
 const abountuse = resolve => require(['@/components/mine/abountuse'], resolve)//我的页面的关于我们\
 const wxregister = resolve => require(['@/components/mine/wxregister'], resolve)//我的页面的微信绑定页面
+const htmlpage = resolve => require(['@/components/module/htmlpage'], resolve)//我的h5页面
 Vue.use(Router)
 
 export default new Router({
@@ -133,10 +139,40 @@ export default new Router({
       component:discussindex
     },
     {
+      path:"/htmlpage",
+      name:"htmlpage",
+      component:htmlpage
+    },
+    {
       path:"/takelooklist/:id",
       name:"takelooklist",
       component:takelooklist
     },
+    {
+      path:"/invitation",
+      name:"invitation",
+      component:invitation
+    },
+    {
+      path:"/friendlist/:id",
+      name:'friendlist',
+      component:friendlist
+    },
+    {
+      path:"/twocode",
+      name:"twocode",
+      component:twocode
+    },
+    {
+      path:"/cardstock",
+      name:"cardstock",
+      component:cardstock
+    },
+    {
+      path:"/integral",
+      name:"integral",
+      component:integral
+    },  
     {
       path:"/makeplan",
       name:"makeplan",

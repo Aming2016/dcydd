@@ -13,10 +13,15 @@ const vfilter = {
             return val;
         }
     },
-    headimgfilter(val) {
-        if (val == "" || val == undefined || val == null || val == '1') {
-            return require("../../imgs/home/headimgmoren.png");
-        } else {
+    headimgfrilter(val){
+        if(val==null){
+            return "this.src='" + require('../../imgs/home/headimgmoren.png') + "'";
+        }
+    },
+    headimgfriltertwo(val){
+        if(val==null){
+            return require('../../imgs/home/headimgmoren.png');
+        }else{
             return val;
         }
     },
@@ -98,6 +103,19 @@ const vfilter = {
             //     return data.url
             // });   
             return "http://dl.im.jiguang.cn/"+val.msg_body.media_id
+        }
+    },
+    monthvfilter(val){
+        var myDate = new Date();
+        var year = myDate.getFullYear();
+        if(val.split("-")[0]==year){
+            if(val.split("-")[1][0]=='0'){
+                return val.split("-")[1][1];
+            }else{
+                return val.split("-")[1];
+            }
+        }else{
+            return val;
         }
     }
 }

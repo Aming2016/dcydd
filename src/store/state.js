@@ -14,9 +14,8 @@ const state = {
 	mpitem:"",//门牌号
 	business:"",//代办业务类型 
 	activeindex:window.sessionStorage.btnindex?window.sessionStorage.btnindex:"1",//控制下面四个按钮
-	message:"",//聊天对象
-	messagelist:"",//存储聊天信息
-	friendlist:[],//会话列表,
-	messagebol:0,//消息总数量
+	friendlist:[],//好友列表
+	chatobject:"",//聊天对象
+	// chatmessage:{},//聊天消息
 }
 export default state;

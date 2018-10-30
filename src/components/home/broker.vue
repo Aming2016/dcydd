@@ -121,8 +121,20 @@ export default {
   created() {
     this._querys();
     this._shaixuanlist();
+    this._wxfx()
   },
   methods: {
+    _wxfx() {
+      var wxfx = {
+        url: window.location.href,
+        imgurl:
+          "https://dichan-test.oss-cn-shenzhen.aliyuncs.com/dichan_cust/logo/denglogo.png",
+        title: "邀请您体验世华易居APP",
+        content:
+          "世华易居app是一款非常受欢迎的综合房产服务软件。世华易居app的主要服务是为有需要的用户提供房产租赁、购买等服务。新房和二手房世华易居app全都有，而且服务十分贴心，价格也很优惠！"
+      };
+      this.$wxfx(wxfx);
+    },
     serchbtn(ev) {
       //搜索确定按钮
       this.numberlor = false;
@@ -337,8 +349,8 @@ export default {
 .cnxhlist {
   margin-top: 0.35rem;
   margin-bottom: 0;
-  width:100%;
-  min-height:100%;
+  width: 100%;
+  min-height: 100%;
 }
 .shuaixuan {
   position: fixed;
@@ -365,7 +377,7 @@ export default {
 #cnxhlistul > li {
   width: 100%;
   height: 1.05rem;
-  float:left;
+  float: left;
   overflow: hidden;
   border-bottom: 1px solid #cacaca;
 }
@@ -400,7 +412,7 @@ export default {
 .cnxhlistright > li:nth-of-type(1) {
   width: 100%;
   font-size: 0.18rem;
-  margin-top:0.2rem;
+  margin-top: 0.2rem;
   overflow: hidden;
 }
 .cnxhlistright > li:nth-of-type(1) > div:nth-of-type(1) {

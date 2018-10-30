@@ -24,7 +24,7 @@ export default {
     console.log(this.htmlurl)
     for(let i=0;i<this.htmlurl.length;i++){
       if(this.htmlurl[i].name=='questionDetail'){
-        this.ahtml=this.htmlurl[i].value+"?id="+this.id+"&scityname="+this.site+"&token="+window.localStorage.token 
+        this.ahtml=this.htmlurl[i].value+"?id="+this.id+"&scityname="+this.site+"&token="+window.localStorage.dc_token 
       }
     }
     console.log(this.ahtml)

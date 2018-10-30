@@ -1,6 +1,5 @@
 // 自适应代码
 (function (win) {
-
 	var doc = win.document;
 	var docEl = doc.documentElement;
 	var tid;
@@ -12,7 +11,6 @@
 		var rem = width /3.75;
 		docEl.style.fontSize = rem + 'px';
 	}
-
 	win.addEventListener('resize', function () {
 		clearTimeout(tid);
 		tid = setTimeout(refreshRem, 300);
@@ -23,7 +21,6 @@
 			tid = setTimeout(refreshRem, 300);
 		}
 	}, false);
-
 	refreshRem();
 
 })(window);

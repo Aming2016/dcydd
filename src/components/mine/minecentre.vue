@@ -51,7 +51,7 @@ export default {
       }
   },
   created(){
-      this.mydata=JSON.parse(window.localStorage.mydata)
+      this.mydata=JSON.parse(window.localStorage.dc_mydata)
   },
   activated(){
       console.log("aqaa")

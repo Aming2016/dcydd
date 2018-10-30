@@ -22,7 +22,8 @@ export default {
     this.id=this.$route.params.id;
     for(let i=0;i<this.htmlurl.length;i++){
       if(this.htmlurl[i].name=='consultantDetail'){
-        this.ahtml=this.htmlurl[i].value+"?id="+this.id
+        this.ahtml=this.htmlurl[i].value+"?id="+this.id+"&scityname="+window.localStorage.site
+        console.log(this.ahtml)
       }
     }
   },

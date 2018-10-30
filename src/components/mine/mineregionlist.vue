@@ -39,60 +39,67 @@
 import { Toast } from "mint-ui";
 import headertwo from "../module/headertwo";
 export default {
- data() {
+  data() {
     return {
       dataname: "我收藏的小区",
-      movenum:true,
-      page:"1",
-      list:[],
+      movenum: true,
+      page: "1",
+      list: []
     };
   },
-created(){
-    this._querys()
-},
-methods:{
+  created() {
+    this._querys();
+  },
+  methods: {
     loadMore() {
-        if(this.page!=='1'){
-          this.loading = true;
+      if (this.page !== "1") {
+        this.loading = true;
         this._querys();
         Toast({
           message: "正在加载。。。",
           position: "bottom",
-          duration:500
+          duration: 500
         });
         setTimeout(() => {
           this.loading = false;
-        }, 2000);  
-        }
-        
+        }, 2000);
+      }
     },
-    _querys(){
-        this.$http.get(this.$url.URL.BULDCOLLECTIONLIST+"?pageNo="+this.page+"&pageSize=10")
-        .then(res=>{
-            this.list=this.list.concat(res.data.data)
-            if (this.list.length > 0) {
-              this.movenum = true;
-            } else {
-              this.movenum = false;
-            }
-            this.page++;
-        })
+    _querys() {
+      this.$http
+        .get(
+          this.$url.URL.BULDCOLLECTIONLIST +
+            "?pageNo=" +
+            this.page +
+            "&pageSize=10"
+        )
+        .then(res => {
+          this.list = this.list.concat(res.data.data);
+          if (this.list.length > 0) {
+            this.movenum = true;
+          } else {
+            this.movenum = false;
+          }
+          this.page++;
+        });
     },
-    rentingitembtn(item){
-        this.$router.push({path:'/hotdisitem/'+ item.sdid})
+    rentingitembtn(item) {
+      window.localStorage.scity = window.localStorage.site;
+      window.localStorage.site = item.scity;
+      this.$router.push({ path: "/hotdisitem/" + item.sdid });
     }
-},
-components: {
+  },
+  components: {
     headertwo
-}  
-}
+  }
+};
 </script>
 <style lang="less" scoped>
-@import '../../common/css/master.less';
-@import '../../common/css/fulist.css';
-.mineregionlist{
-    width:100%;
-    min-height: 100%;
+@import "../../common/css/master.less";
+@import "../../common/css/fulist.css";
+.mineregionlist {
+  width: 100%;
+  min-height: 100%;
 }
 #div_67 {
   width: 100%;
@@ -100,7 +107,7 @@ components: {
   position: fixed;
   text-align: center;
   background: #ffffff;
-  z-index:1;
+  z-index: 1;
   > img {
     width: 35%;
     margin-top: 1.36rem;
@@ -122,20 +129,20 @@ components: {
     margin: 0.4rem auto;
   }
 }
-.cnxhlist{
-    margin-top:0.44rem;
-    margin-bottom:0;
+.cnxhlist {
+  margin-top: 0.44rem;
+  margin-bottom: 0;
 }
- .cnxhcontnetleft {
-    width: 1rem;
-    height: 100%;
-    float: left;
-  }
-  .cnxhcontnetleft > img {
-    width: 100%;
-    height:0.8rem;
-    float: left;
-  }
+.cnxhcontnetleft {
+  width: 1rem;
+  height: 100%;
+  float: left;
+}
+.cnxhcontnetleft > img {
+  width: 100%;
+  height: 0.8rem;
+  float: left;
+}
 </style>
 
 

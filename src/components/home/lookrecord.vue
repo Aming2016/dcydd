@@ -1,5 +1,5 @@
 <template>
-    <div class="rentinglist">
+    <div class="rentinglisttwo">
         <headertwo :dataname="dataname"></headertwo>
         <ul id="ul_1">
             <li>
@@ -11,20 +11,20 @@
                 <p>总带看（次）</p>
             </li>
         </ul>
-        <ul id="ul_2">
+        <ul id="ul_2_two">
             <li>看房日期</li>
             <li>带看人</li>
             <li>联系经纪人</li>
         </ul>
-        <ul id="ul_3"  v-infinite-scroll="loadMore"
+        <ul id="ul_3_two"  v-infinite-scroll="loadMore"
   infinite-scroll-disabled="loading"
   infinite-scroll-distance="10" style=" margin-bottom:0.5rem;">
             <li v-for="item in list">
                 <div>{{item.seeDate}}</div>
                 <div>{{item.emplName}}</div>
                 <div>
-                    <a :href="'tel:'+item.phone">
-                        <img src="../../imgs/home/dianhua.png" alt="">
+                    <a href="javarscript:;" >
+                        <img @click="messgebtn(item)" src="../../imgs/home/dianhua.png" alt="">
                     </a>
                     <a :href="'sms:'+item.phone">
                     <img src="../../imgs/home/duanxin.png" alt="">
@@ -60,7 +60,6 @@ export default {
           this.$http.get(this.$url.URL.HOUSESEE+"/"+this.id+"?scity="+this.site+"&pageNo="+this.page)
           .then(res=>{
               this.list=this.list.concat(res.data.data)
-              console.log(res)
           })
           this.page++
       },
@@ -77,6 +76,21 @@ export default {
         }, 2000);
       }
     },
+    messgebtn(item){
+         //点击跳转聊天页面
+      this.$http
+        .post(this.$url.URL.HUANXINBROKERREGUSER, {
+          chatUsername: item.chatUsername
+        })
+        .then(res => {
+          if (window.localStorage.dc_token) {
+            this.$store.dispatch("pushfriendlist", item);
+            this.$router.push("/abmessage");
+          } else {
+            this.$router.push("/register");
+          }
+        });
+    }
   },
   components: {
     headertwo
@@ -85,7 +99,7 @@ export default {
 </script>
 <style scoped lang="less">
 @import "../../common/css/master.less";
-.rentinglist {
+.rentinglisttwo{
   width: 100%;
   min-height: 100%;
   border-top: 1px solid #ffffff;
@@ -108,6 +122,9 @@ export default {
     text-align: center;
     overflow: hidden;
     margin-top: 0.2rem;
+    >p{
+        line-height: 1.3;
+    }
     p:nth-of-type(1) {
       margin-top: 0.1rem;
     }
@@ -118,7 +135,7 @@ export default {
     }
   }
 }
-#ul_2 {
+#ul_2_two{
   width: 100%;
   height: 0.4rem;
   background: @colorthree;
@@ -136,8 +153,9 @@ export default {
     margin-left: 0.7rem;
   }
 }
-#ul_3{
+#ul_3_two{
     width:100%;
+    margin-bottom:0 !important;
     >li{
         width:90%;
         margin-left:5%;

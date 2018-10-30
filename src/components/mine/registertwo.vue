@@ -24,29 +24,29 @@
 </template>
 <script>
 import buttonone from "../module/buttonone";
-import {MessageBox}from"mint-ui";
-import {md5} from '../../common/js/md5.js'
+import { MessageBox } from "mint-ui";
+import { md5 } from "../../common/js/md5.js";
 export default {
   data() {
     return {
       movenumbe: true,
       fasodxnumber: "获取验证码",
       buttonnametwo: "注册",
-      passwords:"",//密码
+      passwords: "", //密码
       number: 60,
       phonnumber: "",
-      yzmname:"",//验证码
+      yzmname: "" //验证码
     };
   },
-  created(){
-     this.$store.state.activeindex="6";
+  created() {
+    this.$store.state.activeindex = "6";
   },
   methods: {
     returnbtn() {
       this.$router.go(-1);
     },
     pricebtn() {
-    //点击获取验证码
+      //点击获取验证码
       this._yzmquerys();
     },
     gohuanhaombtntwo() {
@@ -54,35 +54,37 @@ export default {
     },
     movephoneer() {
       //移开手机号码输入框
-      if (!/^1[34578]\d{9}$/.test(this.phonnumber)){
+      if (!/^1[34578]\d{9}$/.test(this.phonnumber)) {
         MessageBox.alert("不是完整的11位手机号码");
       }
     },
     _yzmquerys() {
-        //发送验证码
-      if (/^1[34578]\d{9}$/.test(this.phonnumber)){
-        let str=this.phonnumber+this.$url.URL.SECRETKEY
-        console.log(str)
-        let strone = md5(str)
-        this.$http.post(this.$url.URL.FETCHSMSCODE, {
-          mobile:this.phonnumber,
-          sign:strone,
-          operateType:"REGISTER"
-        }).then(res => {
-            if(res.status=="200"){
-              MessageBox.alert("已发送验证码，请注意查收")
+      //发送验证码
+      if (/^1[34578]\d{9}$/.test(this.phonnumber)) {
+        let str = this.phonnumber + this.$url.URL.SECRETKEY;
+        console.log(str);
+        let strone = md5(str);
+        this.$http
+          .post(this.$url.URL.FETCHSMSCODE, {
+            mobile: this.phonnumber,
+            sign: strone,
+            operateType: "REGISTER"
+          })
+          .then(res => {
+            if (res.status == "200") {
+              MessageBox.alert("已发送验证码，请注意查收");
             }
             this._codebtn();
-        })
-        .catch(()=>{
-          MessageBox.alert("发送失败")
-        })     
-      }else{
+          })
+          .catch(() => {
+            MessageBox.alert("发送失败");
+          });
+      } else {
         MessageBox.alert("不是完整的11位手机号码");
       }
     },
-    _codebtn(){
-        this.movenumbe = false;
+    _codebtn() {
+      this.movenumbe = false;
       var setval = setInterval(() => {
         this.number--;
         if (this.number == "-1") {
@@ -94,35 +96,41 @@ export default {
       }, 1000);
     },
     _goquerys() {
-      if (/^1[34578]\d{9}$/.test(this.phonnumber)){
-        if (/^[A-Za-z0-9]{6,12}$/.test(this.passwords)){
-        if(this.yzmname){
-          this.$http.post(this.$url.URL.REGISTER,{
-            deviceCode:"web",
-            mobile:this.phonnumber,
-            smsCode:this.yzmname,
-            password:this.passwords
-          })
-          .then((res)=>{
-           if(res.data.status=="1"){
-              MessageBox.alert("注册成功")
-              this.$router.go(-1)
-            }else{
-              MessageBox.alert(res.data.msg)
-            }
-          })
-        }else{
-          MessageBox.alert("验证码不能为空");
-        }
-        }else{
+      if (/^1[34578]\d{9}$/.test(this.phonnumber)) {
+        if (/^[A-Za-z0-9]{6,12}$/.test(this.passwords)) {
+          if (this.yzmname) {
+            this.$http
+              .post(this.$url.URL.REGISTER, {
+                deviceCode: "web",
+                mobile: this.phonnumber,
+                smsCode: this.yzmname,
+                password: this.passwords
+              })
+              .then(res => {
+                if (res.data.status == "1") {
+                  var objct = {
+                    data: {},
+                    type: "REGISTER"
+                  };
+                  this.$addevent(objct);
+                  MessageBox.alert("注册成功");
+                  this.$router.go(-1);
+                } else {
+                  MessageBox.alert(res.data.msg);
+                }
+              });
+          } else {
+            MessageBox.alert("验证码不能为空");
+          }
+        } else {
           MessageBox.alert("密码必须为6-12为，且字母开头");
         }
-      }else{
-         MessageBox.alert("不是完整的11位手机号码");
+      } else {
+        MessageBox.alert("不是完整的11位手机号码");
       }
     },
-    delvbtn(){
-      this.$router.go(-1)
+    delvbtn() {
+      this.$router.go(-1);
     }
   },
   components: {
@@ -156,22 +164,22 @@ export default {
   font-size: 0.18rem;
   margin-top: 0.35rem;
 }
-.class_3{
-  width:100%;
+.class_3 {
+  width: 100%;
   text-align: center;
   // position: absolute;
   // bottom:0.4rem;
-  margin-top:1rem;
-  font-size:@fontsize_7;
-  >span>a{
-    color:@colorone;
+  margin-top: 1rem;
+  font-size: @fontsize_7;
+  > span > a {
+    color: @colorone;
   }
 }
 .dxcolorone {
   width: 0.8rem;
-  padding:0.06rem 0;
+  padding: 0.06rem 0;
   float: right;
-  line-height:normal;
+  line-height: normal;
   margin-top: 0.05rem;
   background: @colorone;
   border-radius: 0.15rem;
@@ -207,13 +215,13 @@ export default {
   margin-left: 10%;
   margin-top: 0.75rem;
 }
-.div_11{
-  margin-left:10%;
-  font-size:@fontsize_7;
-  color:@color_2;
-  margin-top:0.2rem;
-  >span{
-    color:@colorone;
+.div_11 {
+  margin-left: 10%;
+  font-size: @fontsize_7;
+  color: @color_2;
+  margin-top: 0.2rem;
+  > span {
+    color: @colorone;
   }
 }
 </style>

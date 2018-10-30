@@ -3,7 +3,7 @@
         <headertwo :dataname="dataname"></headertwo>
         <div id="titleimg">
             <mt-swipe :auto="4000" class="swiperitem">
-            <mt-swipe-item v-for="item in bannerimg">
+            <mt-swipe-item v-for="(item,index) in bannerimg" :key="index">
                 <a :href="item.contentUrl">
                     <img :src="item.picUrl" alt="" srcset="">
                 </a>               
@@ -17,7 +17,7 @@
             </div>
         </div>
         <ul id="ul_1">
-            <li v-for="item in gwlist" @click="counselorlistitembtn(item)">
+            <li v-for="(item,index) in gwlist" @click="counselorlistitembtn(item)" :key="index">
                 <div>
                     <img :src="item.photo|headimgfilter" alt="">
                 </div>
@@ -34,7 +34,7 @@
         </div>
         <div id="div_2">
             <ul>
-                <li v-for="item in wentilist">
+                <li v-for="(item,index) in wentilist" :key="index">
                   <a @click="btnurl(item)">
                     <img :src="item.imageUrl" alt="">
                     <div>
@@ -126,7 +126,7 @@ export default {
       });
     },
     guanzhubtn() {
-      if(window.localStorage.token){
+      if(window.localStorage.dc_token){
        this.$router.push("/acttention/1");
       }else{
         MessageBox.confirm('还未登录，是否前往登录页面?').then(action => {
@@ -137,7 +137,7 @@ export default {
       }
     },
     tiwenbtn(){
-      if(window.localStorage.token){
+      if(window.localStorage.dc_token){
        this.$router.push("/acttention/2");
       }else{
         MessageBox.confirm('还未登录，是否前往登录页面?').then(action => {
@@ -148,7 +148,7 @@ export default {
       }
     },
     quizpagebtn() {
-      if(window.localStorage.token){
+      if(window.localStorage.dc_token){
        this.$router.push("/quizpage/1");
       }else{
         MessageBox.confirm('还未登录，是否前往登录页面?').then(action => {

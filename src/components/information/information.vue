@@ -2,7 +2,7 @@
   <div class="information">
     <div id="bannerdiv">
           <img src="../../imgs/mine/bannerone.png" alt="">
-      </div>
+    </div>
     <a :href="headdata.phoneContentUrl">
       <div class="div_1">
       {{headdata.summary}}

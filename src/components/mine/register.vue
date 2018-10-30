@@ -50,6 +50,7 @@
 import buttonone from "../module/buttonone";
 import { MessageBox } from "mint-ui";
 import { md5 } from "../../common/js/md5.js";
+import { hxmessage } from "../../common/js/hxmessage.js";
 export default {
   data() {
     return {
@@ -57,6 +58,7 @@ export default {
       fasodxnumber: "获取验证码",
       buttonnametwo: "登录",
       number: 60,
+      mydata: "", //个人信息
       registernumber: true,
       typename: "password",
       phonnumber: "", //手机号码1
@@ -67,6 +69,9 @@ export default {
   },
   created() {
     this.$store.state.activeindex = "6";
+    if (window.localStorage.dc_token) {
+      this.$router.push("/");
+    }
   },
   methods: {
     returnbtn() {
@@ -132,12 +137,18 @@ export default {
       this.registernumber = false;
     },
     wxdlbtn() {
+      this._querys();
+      var objct = {
+        data: {},
+        type: "LOGIN"
+      };
+      this.$addevent(objct);
       var ua = window.navigator.userAgent.toLowerCase();
       if (ua.match(/MicroMessenger/i) == "micromessenger") {
-       location.href =
-        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
-        this.$url.URL.APPID +
-        "&redirect_uri=http://custapp.shyj.cn/mine&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+        location.href =
+          "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+          this.$url.URL.APPID +
+          "&redirect_uri=http://custapp.shyj.cn/mine&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
       } else {
         MessageBox.alert("请关注世华宜居公众号登录");
       }
@@ -148,18 +159,6 @@ export default {
     gohuanhaombtntwo() {
       this._goquerys();
     },
-    _querys() {
-      this.$http.get(this.$url.URL.MINEDATAINFO).then(res => {
-        window.localStorage.mydata = JSON.stringify(res.data.data);
-        this.mydata = res.data.data;
-        console.log(this.mydata);
-        if (this.mydata.easemobUsername == null) {
-          this._bangdingjiguang();
-        } else {
-          this.jiguangchushi();
-        }
-      });
-    },
     _bangdingjiguang() {
       this.$http
         .get(this.$url.URL.JIGUANGBINDING + "?username=" + this.mydata.mobile)
@@ -168,134 +167,6 @@ export default {
             this._querys();
           }
         });
-    },
-    jiguangchushi() {
-      //极光初始化
-      window.JIM = new JMessage({
-        debug: true
-      });
-      this.$http.get(this.$url.URL.JUGUANGSGT).then(res => {
-        this.jgchushihua(res);
-      });
-    },
-    jgchushihua(res) {
-      //极光初始化
-      var that = this;
-      res.data.data.flag = 1;
-      JIM.init(res.data.data)
-        .onSuccess(function(data) {
-          console.log("初始化成功");
-          console.log(data);
-          that.jgdenglu();
-          this.onDisconnect(); //断线监听
-        })
-        .onFail(function(data) {
-          console.log("初始化失败");
-          this.onDisconnect(); //断线监听
-        });
-    },
-    jgdenglu() {
-      //登录
-      JIM.login({
-        username: JSON.parse(window.localStorage.mydata).easemobUsername,
-        password: JSON.parse(window.localStorage.mydata).easemobPassword
-      })
-        .onSuccess(data => {
-          console.log("登录成功");
-          console.log(data);
-          this.onSyncConversation();
-          this.getConversation(); //获取会话列表
-        })
-        .onFail(function(data) {
-          console.log("登录失败");
-          console.log(data);
-        })
-        .onTimeout(function(data) {
-          console.log("登录延迟");
-          console.log(data);
-        });
-    },
-    onDisconnect() {
-      JIM.onDisconnect(() => {
-        console.log("断线");
-        this._querys();
-      });
-    },
-
-    onMsgReceive() {
-      //监听收到消息后处理
-      JIM.onMsgReceive(data => {
-        console.log("dddd");
-        this.$store.dispatch("messagepush", data.messages[0].content);
-        this.getUnreadMsgCnt(data.messages[0].from_username); //告诉后台获取会话未读数
-        let arr = this.$store.state.messagelist.filter(item => {
-          return item.from_username == data.messages[0].from_username; //假设id为唯一标识
-        });
-        if (arr.length == 0) {
-          var messgone = {};
-          if (data.messages[0].content.msg_type == "image") {
-            var urls = "";
-            JIM.getResource({
-              media_id: data.messages[0].content.msg_body.media_id
-            }).onSuccess(data => {
-              urls = data.url;
-              (messgone.ctime_ms = data.messages[0].content.create_time),
-                (messgone.content = {
-                  from_id: data.messages[0].from_username,
-                  url: true,
-                  msg_body: {
-                    media_id: urls
-                  },
-                  msg_type: "image"
-                });
-              var message = {};
-              message.from_username = data.messages[0].from_username;
-              message.msgs = [];
-              message.msgs.push(messgone);
-              this.$store.dispatch("messagebtnone", message);
-            });
-          } else {
-            (messgone.ctime_ms = data.messages[0].content.create_time),
-              (messgone.content = {
-                from_id: data.messages[0].from_username,
-                msg_body: {
-                  text: data.messages[0].content.msg_body.text
-                },
-                msg_type: "text"
-              });
-            var message = {};
-            message.from_username = data.messages[0].from_username;
-            message.msgs = [];
-            message.msgs.push(messgone);
-            this.$store.dispatch("messagebtnone", message);
-          }
-        } else {
-          this.$store.dispatch("messagebtn", data);
-        }
-      });
-    },
-    onSyncConversation() {
-      var set = [];
-      this.$store.dispatch("messagelist", set);
-      JIM.onSyncConversation(data => {
-        //离线消息同步监听
-        console.log(data);
-        this.$store.dispatch("messagelist", data);
-        this.onMsgReceive(); //收到消息后处理
-      });
-    },
-    getUnreadMsgCnt(name) {
-      //告诉后台充值会话信息
-      var count = JIM.getUnreadMsgCnt({
-        username: name
-      });
-    },
-    getConversation() {
-      //获取会话列表
-      JIM.getConversation().onSuccess(data => {
-        console.log(data);
-        this.$store.dispatch("getConversation", data.conversations);
-      });
     },
     _goquerys() {
       if (this.registernumber) {
@@ -308,10 +179,14 @@ export default {
                 smsCode: this.yzmname
               })
               .then(res => {
-                console.log(res);
                 if (res.data.status == "1") {
-                  window.localStorage.token = res.data.data;
+                  window.localStorage.dc_token = res.data.data;
                   this._querys();
+                  var objct = {
+                    data: {},
+                    type: "LOGIN"
+                  };
+                  this.$addevent(objct);
                   MessageBox.alert("登录成功");
                   this.$router.push("/");
                 } else {
@@ -334,11 +209,16 @@ export default {
                 deviceCode: "web"
               })
               .then(res => {
-                console.log(res);
                 if (res.data.status == "1") {
-                  window.localStorage.token = res.data.data;
-                  MessageBox.alert("登录成功");
+                  window.localStorage.dc_token = res.data.data;
                   this._querys();
+                  this._querys();
+                  var objct = {
+                    data: {},
+                    type: "LOGIN"
+                  };
+                  this.$addevent(objct);
+                  MessageBox.alert("登录成功");
                   this.$router.push("/");
                 } else {
                   MessageBox.alert(res.data.msg);
@@ -351,6 +231,15 @@ export default {
           MessageBox.alert("不是完整的11位手机号码");
         }
       }
+    },
+    //获取我的个人信息
+    _querys() {
+      this.$http.get(this.$url.URL.MINEDATAINFO).then(res => {
+        window.localStorage.dc_mydata = JSON.stringify(res.data.data);
+        console.log(JSON.parse(window.localStorage.dc_mydata));
+        this.mydata = res.data.data;
+        hxmessage(this); //调取环信登录
+      });
     },
     forgetpassword() {
       this.$router.push("/forgetpassword");
@@ -473,8 +362,8 @@ export default {
   padding: 0.01rem 0;
   line-height: normal;
   border-radius: 0.06rem;
-  color: #cacaca;
-  background: #eeeeee;
+  color: #ffffff;
+  background: #ffa0a0;
   text-align: center;
   font-size: 0.14rem;
   float: right;

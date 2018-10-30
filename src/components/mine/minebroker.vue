@@ -103,6 +103,9 @@ export default {
       this.$router.go(-1);
     },
     brokeritem(item) {
+      console.log(item)
+      window.localStorage.scity=window.localStorage.site;
+      window.localStorage.site = item.scity;
       if (item.status == "0") {
         this.$router.push({ path: "/brokeritem/" + item.id });
       }
